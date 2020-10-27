@@ -1,0 +1,2185 @@
+
+<!DOCTYPE html>
+<html lang="en" style='background:white; font-family:"Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif; height:100%; padding:0' height="100%">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="x-apple-disable-message-reformatting">
+
+
+    <style>
+        /* https://www.smashingmagazine.com/2015/01/designing-for-print-with-css/ */
+        @page {
+            size: 8.5in 11in;
+            margin-top: 0cm;
+            margin-bottom: 0cm;
+            margin-left: 0cm;
+            margin-right: 0cm;
+        }
+
+        html,
+        body {
+            background: white;
+            padding: 0;
+            height: 100%;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            width: 100%;
+
+        }
+
+        .pdf-page {
+            display: table;
+            padding: 0;
+            width: 8.5in;
+            height: 10.99in;
+            margin: 0;
+            /* height: 279mm; */
+            flex-wrap: wrap;
+            align-content: center;
+            overflow: hidden;
+            justify-content: center;
+            page-break-inside: avoid;
+            -webkit-column-break-inside: avoid;
+            background-color: white !important;
+        }
+
+        .pdf-page:last-child {
+            align-content: flex-start;
+            justify-content: top;
+        }
+
+        .pdf-page>div {
+            width: 100%;
+            display: table-cell;
+            vertical-align: middle;
+
+            /* outline: dotted 1px red; */
+        }
+
+        .pdf-page:last-child>div {
+            width: 100%;
+            display: table-cell;
+            vertical-align: top;
+            /* outline: dotted 1px red; */
+        }
+
+
+        .widget-product__item {
+            /* outline: dotted 1px blue; */
+            padding: 10px;
+            max-height: 353px;
+        }
+
+        .item {
+            border: solid 1px black;
+        }
+
+
+        #main {
+            background-color: white !important;
+        }
+
+        #print {
+            /* border: solid 1px red; */
+        }
+
+        .mail__container {
+            width: 216mm;
+            margin: 0 auto;
+            background-color:white !important;
+        }
+
+        .mail__brand {
+            text-align: center;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            margin-top: 5px;
+            width: 100%;
+
+
+            background-color: #FFFFFF;
+
+
+        }
+
+        .mail__intro-text {
+            height: 0;
+            display: none;
+        }
+
+        .pdf-page .mail__brand img {
+            width: 100%;
+            max-width: 164px !important;
+            max-height: 60px !important;
+        }
+
+        .mail__widget {
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: auto;
+            padding-bottom: 10px;
+            vertical-align: middle;
+            /*margin-left: 100px !important;
+            margin-right: 100px !important;*/
+        }
+
+        .widget-text {
+            width: 100%;
+        }
+
+        .widget-text img {
+            max-width: 100%;
+        }
+
+        .mail__widget__intro {
+            margin-left: 5px;
+            margin-right: 5px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .widget-product__img {
+            max-width: 210px;
+            width: 100%
+        }
+
+        .widget-product__item-link {
+            color: black;
+            display: block;
+            text-align: center;
+            text-decoration: none
+        }
+
+        .widget-product__item-link__brand {
+            font-size: 12px;
+            font-weight: bold;
+            color: #111;
+        }
+
+        .widget-product__item-link__title {
+            font-size: 12px;
+            color: #111;
+        }
+
+        .mail__signature {
+            background-color: #EBEBEB;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            margin: auto;
+            display: block;
+            page-break-inside: avoid;
+            -webkit-column-break-inside: avoid;
+        }
+
+        .mail__signature table {
+            max-width: 660px;
+            margin: 0 auto;
+        }
+
+        .mail__signature-sep {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .mail__signature-link {
+            display: inline-block;
+            margin: 0 5px;
+        }
+
+        .mail__signature__links {
+            text-align: center;
+            padding-left: 60px;
+        }
+
+        .mail__signature-link a {
+            color: black;
+            text-decoration: none;
+        }
+
+        .mail__signature-social {
+            margin: 15px 0 0 0;
+            list-style: none;
+            padding: 0
+        }
+
+        .mail__hr {
+            border: none;
+            border-top: solid 1px #fff;
+            margin-left: 50px;
+            margin-right: 50px;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+
+        .dot {
+            height: 10px;
+            outline: dotted 1px red;
+            font-size: 8px;
+        }
+
+        .sl-row,
+        .sl-row-12 {
+            height: 1060px;
+        }
+
+        .block,
+        .block-1 {
+            max-height: 1060px;
+            overflow: hidden;
+        }
+
+        .block-2 {
+            max-height: 530px;
+            overflow: hidden;
+
+        }
+
+        .block-3 {
+            max-height: 353px;
+            overflow: hidden;
+        }
+
+        .block-3 .mail__widget-image img {
+            max-height: 353px !important;
+            object-fit: contain;
+        }
+
+        .block-4 {
+            max-height: 256px;
+            overflow: hidden;
+        }
+
+        @media only screen {
+            .pdf-page {
+                /* margin-bottom: 20px; */
+                /* box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); */
+                /* padding: 20px; */
+            }
+        }
+
+        @media print {
+            #main {
+                background-color: white !important;
+            }
+
+            .mail__container {
+                background-color: white !important;
+                border: none;
+                margin: 0;
+            }
+
+            .no-print,
+            .mail__intro-text {
+                display: none !important;
+                height: 0;
+            }
+        }
+    </style>
+</head>
+
+
+<body style='background:white; font-family:"Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif; height:100%; padding:0; margin:0' height="100%">
+
+
+
+<meta property="og:title" content="">
+<meta property="og:image" content="">
+
+
+<div id="wrapper">
+
+    <div id="print">
+        <div class="pdf-page" style="-webkit-column-break-inside:avoid; align-content:flex-start; display:table; flex-wrap:wrap; height:10.99in; justify-content:top; margin:0; overflow:hidden; padding:0; page-break-inside:avoid; width:8.5in; background-color:white !important" height="10.99in" width="8.5in" bgcolor="white !important">
+            <div style="display:table-cell; vertical-align:middle; width:100%" valign="middle" width="100%"></div>
+        </div>
+    </div>
+
+
+
+
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="x-apple-disable-message-reformatting">
+
+
+
+    <div id="wx_pic" style="margin:0 auto;display:none;">
+
+        <img src="https://s4o.imgix.net/media/public/400a3bb590008f19a14ac7dfcbf60f7d.png?w=300&amp;h=300&amp;bg=FFF">
+
+    </div>
+
+    <meta property="og:title" content="Elevated Streetwear">  <!-- Max size: 35 characters -->
+    <meta property="og:image" content="https://s4o.imgix.net/media/public/400a3bb590008f19a14ac7dfcbf60f7d.png?w=320&amp;h=260&amp;bg=FFF">  <!-- Max size: 300KB -->
+
+
+    <style type="text/css">@font-face {
+        font-family: 'Open Sans';
+        font-style: normal;
+        font-weight: 400;
+        src: local('Open Sans Regular'), local('OpenSans-Regular'), url(https://fonts.gstatic.com/s/opensans/v18/mem8YaGs126MiZpBA-UFVZ0e.ttf) format('truetype');
+    }
+    @font-face {
+        font-family: 'Open Sans';
+        font-style: normal;
+        font-weight: 700;
+        src: local('Open Sans Bold'), local('OpenSans-Bold'), url(https://fonts.gstatic.com/s/opensans/v18/mem5YaGs126MiZpBA-UN7rgOUuhs.ttf) format('truetype');
+    }
+    </style>
+    <style type="text/css">@font-face {
+        font-family: 'Karla';
+        font-style: italic;
+        font-weight: 400;
+        src: local('Karla Italic'), local('Karla-Italic'), url(https://fonts.gstatic.com/s/karla/v13/qkBVXvYC6trAT7RQHt6e5A.ttf) format('truetype');
+    }
+    @font-face {
+        font-family: 'Karla';
+        font-style: italic;
+        font-weight: 700;
+        src: local('Karla Bold Italic'), local('Karla-BoldItalic'), url(https://fonts.gstatic.com/s/karla/v13/qkBQXvYC6trAT7RQFmW79LlvmA.ttf) format('truetype');
+    }
+    @font-face {
+        font-family: 'Karla';
+        font-style: normal;
+        font-weight: 400;
+        src: local('Karla'), local('Karla-Regular'), url(https://fonts.gstatic.com/s/karla/v13/qkBbXvYC6trAT7RVLtk.ttf) format('truetype');
+    }
+    @font-face {
+        font-family: 'Karla';
+        font-style: normal;
+        font-weight: 700;
+        src: local('Karla Bold'), local('Karla-Bold'), url(https://fonts.gstatic.com/s/karla/v13/qkBWXvYC6trAT7zuC8m5xL4.ttf) format('truetype');
+    }
+    @font-face {
+        font-family: 'Playfair Display';
+        font-style: italic;
+        font-weight: 400;
+        src: url(https://fonts.gstatic.com/s/playfairdisplay/v21/nuFRD-vYSZviVYUb_rj3ij__anPXDTnCjmHKM4nYO7KN_qiTXtHA_A.ttf) format('truetype');
+    }
+    @font-face {
+        font-family: 'Playfair Display';
+        font-style: italic;
+        font-weight: 700;
+        src: url(https://fonts.gstatic.com/s/playfairdisplay/v21/nuFRD-vYSZviVYUb_rj3ij__anPXDTnCjmHKM4nYO7KN_k-UXtHA_A.ttf) format('truetype');
+    }
+    @font-face {
+        font-family: 'Playfair Display';
+        font-style: italic;
+        font-weight: 900;
+        src: url(https://fonts.gstatic.com/s/playfairdisplay/v21/nuFRD-vYSZviVYUb_rj3ij__anPXDTnCjmHKM4nYO7KN_gGUXtHA_A.ttf) format('truetype');
+    }
+    @font-face {
+        font-family: 'Playfair Display';
+        font-style: normal;
+        font-weight: 400;
+        src: url(https://fonts.gstatic.com/s/playfairdisplay/v21/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvXDXbtY.ttf) format('truetype');
+    }
+    @font-face {
+        font-family: 'Playfair Display';
+        font-style: normal;
+        font-weight: 700;
+        src: url(https://fonts.gstatic.com/s/playfairdisplay/v21/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKeiunDXbtY.ttf) format('truetype');
+    }
+    @font-face {
+        font-family: 'Playfair Display';
+        font-style: normal;
+        font-weight: 900;
+        src: url(https://fonts.gstatic.com/s/playfairdisplay/v21/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKfsunDXbtY.ttf) format('truetype');
+    }
+    </style>
+    <style type="text/css">.ql-size-small {
+        font-size: .75em;
+    }
+    .ql-size-large {
+        font-size: 1.5em;
+    }
+    .ql-size-huge {
+        font-size: 2.5em;
+    }
+    .ql-align-center{
+        text-align: center;
+    }
+    .ql-font-Baloo{
+        font-family: 'Baloo', sans-serif;
+    }
+
+
+    .ql-font-FarfetchBasis {
+        font-family: 'FarfetchBasis', 'Helvetica Neue', 'Arial', sans-serif;
+    }
+    .ql-font-FarfetchBasisArabic {
+        font-family: 'FarfetchBasisArabic', 'Helvetica Neue', 'Arial', sans-serif;
+    }
+    .ql-font-FarfetchBasisMono {
+        font-family: 'FarfetchBasisMono', 'Helvetica Neue', 'Arial', sans-serif;
+    }
+    @media screen {
+        @font-face {
+            font-display: auto;
+            font-family: 'FarfetchBasis';
+            font-style  : normal;
+            font-weight : 700;
+            src: local('FarfetchBasis'),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasis-Bold.woff2") format("woff2"),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasis-Bold.woff") format("woff");
+        }
+        @font-face {
+            font-display: auto;
+            font-family: 'FarfetchBasis';
+            font-style  : italic;
+            font-weight : 700;
+            src: local('FarfetchBasis'),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasis-BoldItalic.woff2") format("woff2"),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasis-BoldItalic.woff") format("woff");
+        }
+        @font-face {
+            font-display: auto;
+            font-family: 'FarfetchBasis';
+            font-style  : italic;
+            font-weight : 400;
+            src: local('FarfetchBasis'),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasis-Italic.woff2") format("woff2"),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasis-Italic.woff") format("woff");
+        }
+        @font-face {
+            font-display: auto;
+            font-family: 'FarfetchBasis';
+            font-style  : normal;
+            font-weight : 400;
+            src: local('FarfetchBasis'),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasis-Regular.woff2") format("woff2"),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasis-Regular.woff") format("woff");
+        }
+        @font-face {
+            font-display: auto;
+            font-family: 'FarfetchBasisArabic';
+            font-style  : normal;
+            font-weight : 400;
+            src: local('FarfetchBasisArabic'),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasisArabic-Regular.woff2") format("woff2"),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasisArabic-Bold.woff") format("woff");
+        }
+        @font-face {
+            font-display: auto;
+            font-family: 'FarfetchBasisArabic';
+            font-style  : normal;
+            font-weight : 700;
+            src: local('FarfetchBasisArabic'),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasisArabic-Bold.woff2") format("woff2"),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasisArabic-Bold_GbaUy1P.woff") format("woff");
+        }
+        @font-face {
+            font-display: auto;
+            font-family: 'FarfetchBasisMono';
+            font-style  : normal;
+            font-weight : 700;
+            src: local('FarfetchBasisMono'),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasisMono-Bold.woff2") format("woff2"),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasisMono-Bold.woff") format("woff");
+        }
+        @font-face {
+            font-display: auto;
+            font-family: 'FarfetchBasisMono';
+            font-style  : normal;
+            font-weight : 400;
+            src: local('FarfetchBasisMono'),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasisMono-Regular.woff2") format("woff2"),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasisMono-Regular.woff") format("woff");
+        }
+        @font-face {
+            font-display: auto;
+            font-family: 'FarfetchBasisMono';
+            font-style  : italic;
+            font-weight : 400;
+            src: local('FarfetchBasisMono'),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasis-Italic_Ds9E3xo.woff2") format("woff2"),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasis-Italic_R9QfoBt.woff") format("woff");
+        }
+        @font-face {
+            font-display: auto;
+            font-family: 'FarfetchBasisMono';
+            font-style  : italic;
+            font-weight : 700;
+            src: local('FarfetchBasisMono'),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasisMono-BoldItalic.woff2") format("woff2"),url("https://s4o.imgix.net/media/public/fonts/FarfetchBasisMono-BoldItalic.woff") format("woff");
+        }
+    }
+
+    </style>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding: 0;
+            color: #080808;
+        }
+        .mail__brand{
+            text-align: center;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            /* border-top: solid 10px #fff; */
+            margin-top: 0px;
+            background-color:  #FFFFFF;
+        }
+        .mail__intro-text{
+            padding: 20px;
+            font-family: 'FarfetchBasis', 'Helvetica Neue', 'Arial', sans-serif;
+            font-size: 14px;
+            background-color: white;
+        }
+        .mail__brand img{
+            height: auto;
+            width:100%;
+            max-width: 300px;
+
+        }
+        .mail__widget__intro{
+            /* border-left: solid 10px #fff;
+            border-right: solid 10px #fff; */
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+        .mail__widget{
+            /* border-left: solid 10px #fff;
+            border-right: solid 10px #fff; */
+            padding-top: 10px;
+            padding-bottom: 10px;
+            margin-left: 0px;
+            margin-right: 0px;
+            background-color: white;
+        }
+        .widget-text{
+            padding: 20px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 14px;
+            background-color:  white;
+        }
+        .mail__intro-text p,
+        .widget-text p{
+            margin-bottom: 0;
+            line-height: normal;
+        }
+        .widget-text img{
+            max-width: 90%;
+            max-width: calc(100% - 10px);
+        }
+
+        .widget-image{
+            text-align: center;
+        }
+        .widget-image img{
+            width: 800px ;
+            height: 650px;
+        }
+        .widget-product{
+            margin: 0 auto;
+            background-color: white;
+            width: 100%;
+        }
+        .widget-product__item{
+            margin: 10px;
+        }
+        #print .widget-product__item{
+            margin: 10px auto !important;
+            max-width: 139px;
+        }
+        .widget-product__item-link{
+            display: block;
+            text-decoration: none;
+            color: black;
+            /* color: #fff; */
+            text-align: center;
+        }
+        .widget-product__img{
+            /*max-height: 280px; */
+            /*height: 280px;*/
+            /*object-fit: cover;*/
+            max-width: 230px;
+            width: 100%;
+        }
+        .widget-product__item-description{
+            /*min-height: 75px;
+            max-width: 230px;*/
+        }
+
+        .mail__hr{
+            border: none;
+            border-top: solid 1px #fff;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        .mail__container{
+            /* HERE GOES THE GRADIENT OR BACKGROUND */
+            max-width: 964px;
+            min-width: 864px;
+            background-color: #fff;
+            /* background: linear-gradient(to bottom, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%); */
+
+            margin: 0 auto;
+            padding-bottom: 1px;
+            /*border: solid 1px #f2f2f2; */
+            font-family: 'Open Sans', sans-serif;
+        }
+        .mail__signature{
+            background-color: #EBEBEB;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            /* border-left: solid 10px #fff; */
+            /* border-right: solid 10px #fff; */
+            /* border-bottom: solid 10px #fff; */
+        }
+        .mail__signature table{
+            max-width: 660px;
+            margin: 0 auto;
+        }
+        .mmax-sep{
+            display: block;
+            margin-bottom: 10px;
+        }
+        .mail__signature-link{
+            display: inline-block;
+            margin: 0 5px;
+        }
+        .mail__signature__links{
+            text-align: center;
+
+
+        }
+        .mail__signature-link a{
+            color: black;
+            text-decoration: none;
+        }
+        .mail__signature-social{
+            margin: 15px 0 0 0;
+            list-style: none;
+            padding: 0
+        }
+
+        .widget-product__item-container{
+            width: 33.3%;
+            height: 100%;
+            vertical-align: top;
+        }
+
+
+        @media screen {
+            #main {
+                background-color: white !important;
+            }
+
+            .mail__container{
+                max-width: 100% !important;
+            }
+
+            .widget-image img{
+                width: 100%;
+            }
+        }
+
+        @media only screen and (max-device-width: 596px) {
+            .mail__container{
+                margin : 0;
+            }
+
+        }
+
+
+
+        .mail__signature{
+            text-align: center;
+        }
+        .mail__signature table{
+            max-width: 100% !important;
+
+            width: 300px;
+
+        }
+        .mail__signature__name{
+            margin-bottom: 0 !important;
+        }
+
+        .mail__signature__links{
+            text-align: left;
+        }
+
+        .mail__signature-link {
+            margin: 0;
+        }
+
+        .mail__base__intro-text {
+            display: none
+        }
+
+        .mail__hr{
+            padding: 0 !important;
+        }
+
+
+
+    </style>
+    <!-- Extra JS -->
+
+
+
+
+
+
+
+
+
+
+
+    <div id="main" style="background-color:white !important" bgcolor="white !important">
+
+        <!-- 1114px -->
+        <div class="entry-preview__mail mail__container" style='margin:0 auto; width:860px; background-color:#fff; font-family:"Open Sans", sans-serif; max-width:964px; min-width:864px; padding-bottom:1px' bgcolor="#ffffff" width="860">
+
+
+            <div class="mail__intro-text mail__base__intro-text pdfcrowd-remove" style='display:none; height:0; background-color:white; font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif; font-size:14px; padding:20px; color:#010101' bgcolor="white" height="0">
+
+
+                <p style="line-height:normal; margin-bottom:0"><span class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>Happy Thursday {Name},</span></p>
+                <p style="line-height:normal; margin-bottom:0"><br></p>
+                <p style="line-height:normal; margin-bottom:0"><br></p>
+                <p style="line-height:normal; margin-bottom:0"><span class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>I'm sure at some point in recent years you've heard of the saying that goes...</span><em class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'> </em></p>
+                <p style="line-height:normal; margin-bottom:0"><br></p>
+                <p style="line-height:normal; margin-bottom:0"><em class="ql-font-FarfetchBasis ql-size-large" style='font-size:1.5em; font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>"</em><strong class="ql-font-FarfetchBasis ql-size-large" style='font-size:1.5em; font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'><em>Streetwear Is The New Sexy" </em></strong></p>
+                <p style="line-height:normal; margin-bottom:0"><br></p>
+                <p style="line-height:normal; margin-bottom:0"><span class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>But to champion the streetwear trend in the most elevated way, the key is to really mixing casual and dressy pieces. Shop through the edit below, and maybe it will simply give you some amazing style inspo! If you need me, I'm a call/text/Whatsapp away to help you look for what you need ;)</span></p>
+                <p style="line-height:normal; margin-bottom:0"><br></p>
+                <p style="line-height:normal; margin-bottom:0"><br></p>
+                <p style="line-height:normal; margin-bottom:0"><br></p>
+                <p style="line-height:normal; margin-bottom:0"><span class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>Your Stylist,</span></p>
+                <p style="line-height:normal; margin-bottom:0"><strong class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>Christine Mou</strong></p>
+                <p style="line-height:normal; margin-bottom:0"><strong class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>Farfetch Private Client</strong></p>
+                <p style="line-height:normal; margin-bottom:0"><span class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>+1 503.580.3055</span></p>
+                <p style="line-height:normal; margin-bottom:0"><br></p>
+                <p style="line-height:normal; margin-bottom:0"><br></p>
+                <p style="line-height:normal; margin-bottom:0"><br></p>
+                <p style="line-height:normal; margin-bottom:0"><br></p>
+                <p style="line-height:normal; margin-bottom:0"><br></p>
+
+
+            </div>
+
+
+
+            <div>
+                <div class="mail__widget__intro" style="display:flex; justify-content:center; margin-left:0; margin-right:0">
+                    <div class="mail__brand" style="background-color:#FFF; margin-top:0; padding-bottom:10px; padding-top:10px; text-align:center; width:100%" bgcolor="#FFFFFF" align="center" width="100%">
+
+                        <img src="https://s4o.imgix.net/media/public/logos/farfetch_pdf_djPPskI.png" style="height:auto; max-width:300px; width:100%; max-height:none" height="auto" width="100%">
+
+                        <hr class="mail__hr" style="border:none; border-top:solid 1px #fff; margin-bottom:0; margin-left:50px; margin-right:50px; margin-top:0; padding:0 !important">
+                    </div>
+                </div>
+
+
+                <div class="mail__intro-text pdfcrowd-remove" style='display:none; height:0; background-color:white; font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif; font-size:14px; padding:20px; color:#010101' bgcolor="white" height="0">
+
+                    <p style="line-height:normal; margin-bottom:0"><span class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>Happy Thursday {Name},</span></p>
+                    <p style="line-height:normal; margin-bottom:0"><br></p>
+                    <p style="line-height:normal; margin-bottom:0"><br></p>
+                    <p style="line-height:normal; margin-bottom:0"><span class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>I'm sure at some point in recent years you've heard of the saying that goes...</span><em class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'> </em></p>
+                    <p style="line-height:normal; margin-bottom:0"><br></p>
+                    <p style="line-height:normal; margin-bottom:0"><em class="ql-font-FarfetchBasis ql-size-large" style='font-size:1.5em; font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>"</em><strong class="ql-font-FarfetchBasis ql-size-large" style='font-size:1.5em; font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'><em>Streetwear Is The New Sexy" </em></strong></p>
+                    <p style="line-height:normal; margin-bottom:0"><br></p>
+                    <p style="line-height:normal; margin-bottom:0"><span class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>But to champion the streetwear trend in the most elevated way, the key is to really mixing casual and dressy pieces. Shop through the edit below, and maybe it will simply give you some amazing style inspo! If you need me, I'm a call/text/Whatsapp away to help you look for what you need ;)</span></p>
+                    <p style="line-height:normal; margin-bottom:0"><br></p>
+                    <p style="line-height:normal; margin-bottom:0"><br></p>
+                    <p style="line-height:normal; margin-bottom:0"><br></p>
+                    <p style="line-height:normal; margin-bottom:0"><span class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>Your Stylist,</span></p>
+                    <p style="line-height:normal; margin-bottom:0"><strong class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>Christine Mou</strong></p>
+                    <p style="line-height:normal; margin-bottom:0"><strong class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>Farfetch Private Client</strong></p>
+                    <p style="line-height:normal; margin-bottom:0"><span class="ql-font-FarfetchBasis" style='font-family:"FarfetchBasis", "Helvetica Neue", "Arial", sans-serif'>+1 503.580.3055</span></p>
+                    <p style="line-height:normal; margin-bottom:0"><br></p>
+                    <p style="line-height:normal; margin-bottom:0"><br></p>
+                    <p style="line-height:normal; margin-bottom:0"><br></p>
+                    <p style="line-height:normal; margin-bottom:0"><br></p>
+                    <p style="line-height:normal; margin-bottom:0"><br></p>
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <div class="widget-image" style="text-align:center" align="center">
+                    <table><tr><td style="padding: 0; margin: 0;">
+
+                        <div style="position: relative;">
+                            <img width="800" height="650" src="https://api.digitalstylelab.com/render_svg/17103/" usemap="#map_17103" alt="" style="height:650px; width:800px">
+
+
+                            <map name="map_17103">
+
+
+
+
+
+                                <area alt="" coords="4,34,239,348" href="https://www.farfetch.com/shopping/women/palm-angels-appliqued-cotton-sweatshirt-item-15457403.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="565,333,791,634" href="https://www.farfetch.com/shopping/women/maison-margiela-punch-hole-boyfriend-jeans-item-15370186.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="233,34,468,347" href="https://www.farfetch.com/shopping/women/marine-serre-crescent-moon-reflective-top-item-15295361.aspx?storeid=10184" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                            </map>
+
+
+
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/palm-angels-appliqued-cotton-sweatshirt-item-15457403.aspx?storeid=9359" class="maplink" style="position: absolute; top: 5%; left: 0%; width: 29%; height: 48%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/maison-margiela-punch-hole-boyfriend-jeans-item-15370186.aspx?storeid=9359" class="maplink" style="position: absolute; top: 51%; left: 71%; width: 28%; height: 46%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/marine-serre-crescent-moon-reflective-top-item-15295361.aspx?storeid=10184" class="maplink" style="position: absolute; top: 5%; left: 29%; width: 29%; height: 48%;"></a>
+
+
+
+
+
+                        </div>
+
+
+
+
+                    </td></tr></table>
+                </div>
+
+
+                <div class="mail__hr__container" style="margin-left: 50px; margin-right: 50px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td class="mail__hr" style="border:none; border-top:solid 1px #fff; margin-bottom:0; margin-left:50px; margin-right:50px; margin-top:0; padding:0 !important; width:100%" width="100%"> </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+
+            <!--
+
+             -->
+
+
+
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <div class="widget-image" style="text-align:center" align="center">
+                    <table><tr><td style="padding: 0; margin: 0;">
+
+                        <div style="position: relative;">
+                            <img width="800" height="650" src="https://api.digitalstylelab.com/render_svg/17104/" usemap="#map_17104" alt="" style="height:650px; width:800px">
+
+
+                            <map name="map_17104">
+
+
+
+                                <area alt="" coords="542,32,713,292" href="https://www.farfetch.com/shopping/women/we11done-teddy-cotton-hoodie-item-15253656.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="42,111,406,598" href="https://www.farfetch.com/shopping/women/we11done-teddy-cotton-hoodie-item-15253656.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="519,213,641,570" href="https://www.farfetch.com/shopping/women/we11done-track-pants-item-15253565.aspx?storeid=9306" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="627,366,722,473" href="https://www.farfetch.com/shopping/women/lauren-rubinski-14kt-yellow-gold-chain-bracelet-item-15341032.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+
+
+                                <area alt="" coords="356,39,513,262" href="https://www.farfetch.com/shopping/women/frankie-shop-eva-padded-t-shirt-item-15304948.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="349,245,474,607" href="https://www.farfetch.com/shopping/women/we11done-bleached-reflective-logo-track-trousers-item-15253167.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="337,548,359,638" href="https://www.farfetch.com/shopping/women/anita-ko-18kt-yellow-gold-cuff-earring-item-15491927.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="441,499,554,644" href="https://www.farfetch.com/shopping/women/jacquemus-le-chiquito-moyen-mini-bag-item-15928616.aspx?storeid=10030" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                            </map>
+
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/we11done-teddy-cotton-hoodie-item-15253656.aspx?storeid=9359" class="maplink" style="position: absolute; top: 5%; left: 68%; width: 21%; height: 40%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/we11done-teddy-cotton-hoodie-item-15253656.aspx?storeid=9359" class="maplink" style="position: absolute; top: 17%; left: 5%; width: 46%; height: 75%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/we11done-track-pants-item-15253565.aspx?storeid=9306" class="maplink" style="position: absolute; top: 33%; left: 65%; width: 15%; height: 55%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/lauren-rubinski-14kt-yellow-gold-chain-bracelet-item-15341032.aspx?storeid=9359" class="maplink" style="position: absolute; top: 56%; left: 78%; width: 12%; height: 16%;"></a>
+
+
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/frankie-shop-eva-padded-t-shirt-item-15304948.aspx?storeid=9359" class="maplink" style="position: absolute; top: 6%; left: 45%; width: 20%; height: 34%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/we11done-bleached-reflective-logo-track-trousers-item-15253167.aspx?storeid=9359" class="maplink" style="position: absolute; top: 38%; left: 44%; width: 16%; height: 56%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/anita-ko-18kt-yellow-gold-cuff-earring-item-15491927.aspx?storeid=9359" class="maplink" style="position: absolute; top: 84%; left: 42%; width: 3%; height: 14%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/jacquemus-le-chiquito-moyen-mini-bag-item-15928616.aspx?storeid=10030" class="maplink" style="position: absolute; top: 77%; left: 55%; width: 14%; height: 22%;"></a>
+
+
+
+
+
+                        </div>
+
+
+
+
+                    </td></tr></table>
+                </div>
+
+
+                <div class="mail__hr__container" style="margin-left: 50px; margin-right: 50px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td class="mail__hr" style="border:none; border-top:solid 1px #fff; margin-bottom:0; margin-left:50px; margin-right:50px; margin-top:0; padding:0 !important; width:100%" width="100%"> </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+
+            <!--  -->
+
+
+
+
+
+
+
+            <!-- Products  -->
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <table width="100%">
+                    <tr>
+                        <td> </td>
+                        <td width="80%">
+
+                            <table class="widget-product" style="background-color:white; margin:0 auto; width:100%" bgcolor="white" width="100%">
+                                <tr>
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/we11done-logo-print-hoodie-item-15253580.aspx" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/b427ed0d15f1b4504153025ecafaa2dd.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: logo-print hoodie</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">We11done</div>
+                                                    <div style="font-size: 12px;color:black;">logo-print hoodie</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/jacquemus-le-chiquito-tote-bag-item-15752447.aspx?storeid=11585" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/4f229e0f6e9b680020ec7c4b0cdf5c76.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: Le Chiquito tote bag</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">Jacquemus</div>
+                                                    <div style="font-size: 12px;color:black;">Le Chiquito tote bag</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/frankies-bikinis-jax-bucket-hat-item-15224203.aspx?storeid=9359" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/4eb7e1e079b8052374a6440fdaa7b182.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: Jax bucket hat</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">Frankies Bikinis</div>
+                                                    <div style="font-size: 12px;color:black;">Jax bucket hat</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+                                </tr>
+                            </table>
+
+                        </td>
+                        <td> </td>
+                    </tr>
+                </table>
+
+
+            </div>
+
+
+            <!--  -->
+
+
+
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <div class="widget-image" style="text-align:center" align="center">
+                    <table><tr><td style="padding: 0; margin: 0;">
+
+                        <div style="position: relative;">
+                            <img width="800" height="650" src="https://api.digitalstylelab.com/render_svg/17106/" usemap="#map_17106" alt="" style="height:650px; width:800px">
+
+
+                            <map name="map_17106">
+
+
+
+                                <area alt="" coords="624,412,777,617" href="https://www.farfetch.com/shopping/women/off-white-face-print-straight-leg-jeans-item-15850450.aspx?storeid=9843" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="544,38,690,290" href="https://www.farfetch.com/shopping/women/off-white-nude-semi-sheer-t-shirt-with-high-neck-item-15775765.aspx?storeid=9352" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="50,101,439,620" href="https://www.farfetch.com/shopping/women/off-white-arrow-cuffs-tapered-track-pants-item-15355419.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="384,249,509,636" href="https://www.farfetch.com/shopping/women/off-white-arrow-cuffs-tapered-track-pants-item-15355419.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="391,113,523,226" href="https://www.farfetch.com/shopping/women/marine-serre-embroidered-logo-ribbed-bra-item-15295306.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="520,249,635,643" href="https://www.farfetch.com/shopping/women/off-white-face-print-straight-leg-jeans-item-15850450.aspx?storeid=9843" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="599,246,735,321" href="https://www.farfetch.com/shopping/women/marine-serre-moon-logo-print-face-mask-item-15836253.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                            </map>
+
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/off-white-face-print-straight-leg-jeans-item-15850450.aspx?storeid=9843" class="maplink" style="position: absolute; top: 63%; left: 78%; width: 19%; height: 32%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/off-white-nude-semi-sheer-t-shirt-with-high-neck-item-15775765.aspx?storeid=9352" class="maplink" style="position: absolute; top: 6%; left: 68%; width: 18%; height: 39%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/off-white-arrow-cuffs-tapered-track-pants-item-15355419.aspx?storeid=9359" class="maplink" style="position: absolute; top: 16%; left: 6%; width: 49%; height: 80%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/off-white-arrow-cuffs-tapered-track-pants-item-15355419.aspx?storeid=9359" class="maplink" style="position: absolute; top: 38%; left: 48%; width: 16%; height: 59%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/marine-serre-embroidered-logo-ribbed-bra-item-15295306.aspx?storeid=9359" class="maplink" style="position: absolute; top: 17%; left: 49%; width: 17%; height: 17%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/off-white-face-print-straight-leg-jeans-item-15850450.aspx?storeid=9843" class="maplink" style="position: absolute; top: 38%; left: 65%; width: 14%; height: 61%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/marine-serre-moon-logo-print-face-mask-item-15836253.aspx?storeid=9359" class="maplink" style="position: absolute; top: 38%; left: 75%; width: 17%; height: 11%;"></a>
+
+
+
+
+
+                        </div>
+
+
+
+
+                    </td></tr></table>
+                </div>
+
+
+                <div class="mail__hr__container" style="margin-left: 50px; margin-right: 50px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td class="mail__hr" style="border:none; border-top:solid 1px #fff; margin-bottom:0; margin-left:50px; margin-right:50px; margin-top:0; padding:0 !important; width:100%" width="100%"> </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+
+            <!--  -->
+
+
+
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <div class="widget-image" style="text-align:center" align="center">
+                    <table><tr><td style="padding: 0; margin: 0;">
+
+                        <div style="position: relative;">
+                            <img width="800" height="650" src="https://api.digitalstylelab.com/render_svg/17107/" usemap="#map_17107" alt="" style="height:650px; width:800px">
+
+
+                            <map name="map_17107">
+
+
+
+                                <area alt="" coords="611,233,741,614" href="https://www.farfetch.com/shopping/women/alexander-wang-stretch-corduroy-track-trousers-item-15328213.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="29,92,413,604" href="https://www.farfetch.com/shopping/women/alexander-wang-stretch-corduroy-track-trousers-item-15328213.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="327,420,470,645" href="https://www.farfetch.com/shopping/women/alexander-wang-elasticated-panel-boots-item-15694692.aspx?storeid=10283" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="581,43,673,431" href="https://www.farfetch.com/shopping/women/simone-rocha-tie-waist-knitted-top-item-15809828.aspx?storeid=9089" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+
+
+
+
+                            </map>
+
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/alexander-wang-stretch-corduroy-track-trousers-item-15328213.aspx?storeid=9359" class="maplink" style="position: absolute; top: 36%; left: 76%; width: 16%; height: 59%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/alexander-wang-stretch-corduroy-track-trousers-item-15328213.aspx?storeid=9359" class="maplink" style="position: absolute; top: 14%; left: 4%; width: 48%; height: 79%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/alexander-wang-elasticated-panel-boots-item-15694692.aspx?storeid=10283" class="maplink" style="position: absolute; top: 65%; left: 41%; width: 18%; height: 35%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/simone-rocha-tie-waist-knitted-top-item-15809828.aspx?storeid=9089" class="maplink" style="position: absolute; top: 7%; left: 73%; width: 11%; height: 60%;"></a>
+
+
+
+
+
+
+
+
+
+                        </div>
+
+
+
+
+                    </td></tr></table>
+                </div>
+
+
+                <div class="mail__hr__container" style="margin-left: 50px; margin-right: 50px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td class="mail__hr" style="border:none; border-top:solid 1px #fff; margin-bottom:0; margin-left:50px; margin-right:50px; margin-top:0; padding:0 !important; width:100%" width="100%"> </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+
+            <!--  -->
+
+
+
+
+
+
+
+            <!-- Products  -->
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <table width="100%">
+                    <tr>
+                        <td> </td>
+                        <td width="80%">
+
+                            <table class="widget-product" style="background-color:white; margin:0 auto; width:100%" bgcolor="white" width="100%">
+                                <tr>
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/alexander-wang-chain-link-keyhole-jumper-item-15830008.aspx?storeid=9352" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/7b7a68cb1cca7189c8205459ef7524d2_9Ajmlyy.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: chain link keyhole jumper</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">Alexander Wang</div>
+                                                    <div style="font-size: 12px;color:black;">chain link keyhole jumper</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/adidas-yeezy-yeezy-700-v3-alvah-sneakers-item-15379026.aspx?storeid=11218" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/b89aa54618bacd1c7d1400421bb62e9e_YFFasTw.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: Yeezy 700 V3 &quot;Alvah&quot; sneakers</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">adidas YEEZY</div>
+                                                    <div style="font-size: 12px;color:black;">Yeezy 700 V3 "Alvah" sneakers</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/maisie-wilen-orbit-city-logo-print-dress-item-15750089.aspx?storeid=10161" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/4f44fe2ded3882846c288c5b9bb28aaf.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: Orbit City logo-print dress</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">Maisie Wilen</div>
+                                                    <div style="font-size: 12px;color:black;">Orbit City logo-print dress</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+                                </tr>
+                            </table>
+
+                        </td>
+                        <td> </td>
+                    </tr>
+                </table>
+
+
+            </div>
+
+
+            <!--  -->
+
+
+
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <div class="widget-image" style="text-align:center" align="center">
+                    <table><tr><td style="padding: 0; margin: 0;">
+
+                        <div style="position: relative;">
+                            <img width="800" height="650" src="https://api.digitalstylelab.com/render_svg/17109/" usemap="#map_17109" alt="" style="height:650px; width:800px">
+
+
+                            <map name="map_17109">
+
+
+
+                                <area alt="" coords="454,461,602,638" href="https://www.farfetch.com/shopping/women/by-far-amber-shoulder-bag-item-15973016.aspx?storeid=9124" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="11,86,409,617" href="https://www.farfetch.com/shopping/women/fantabody-valentina-leo-short-sleeve-bodysuit-item-15355327.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="468,83,657,365" href="https://www.farfetch.com/shopping/women/fantabody-valentina-leo-short-sleeve-bodysuit-item-15355327.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="593,256,732,650" href="https://www.farfetch.com/shopping/women/fantabody-flared-leggings-item-15355410.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="445,251,559,457" href="https://www.farfetch.com/shopping/women/foundrae-protection-baby-medallion-necklace-item-12336348.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="644,144,705,202" href="https://www.farfetch.com/shopping/women/maria-black-midnight-ring-item-13698236.aspx" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="368,497,480,528" href="https://www.farfetch.com/shopping/women/suzanne-kalan-baguette-bar-diamond-earrings-item-13951483.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                            </map>
+
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/by-far-amber-shoulder-bag-item-15973016.aspx?storeid=9124" class="maplink" style="position: absolute; top: 71%; left: 57%; width: 18%; height: 27%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/fantabody-valentina-leo-short-sleeve-bodysuit-item-15355327.aspx?storeid=9359" class="maplink" style="position: absolute; top: 13%; left: 1%; width: 50%; height: 82%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/fantabody-valentina-leo-short-sleeve-bodysuit-item-15355327.aspx?storeid=9359" class="maplink" style="position: absolute; top: 13%; left: 59%; width: 24%; height: 43%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/fantabody-flared-leggings-item-15355410.aspx?storeid=9359" class="maplink" style="position: absolute; top: 39%; left: 74%; width: 17%; height: 61%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/foundrae-protection-baby-medallion-necklace-item-12336348.aspx?storeid=9359" class="maplink" style="position: absolute; top: 39%; left: 56%; width: 14%; height: 32%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/maria-black-midnight-ring-item-13698236.aspx" class="maplink" style="position: absolute; top: 22%; left: 81%; width: 8%; height: 9%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/suzanne-kalan-baguette-bar-diamond-earrings-item-13951483.aspx?storeid=9359" class="maplink" style="position: absolute; top: 76%; left: 46%; width: 14%; height: 5%;"></a>
+
+
+
+
+
+                        </div>
+
+
+
+
+                    </td></tr></table>
+                </div>
+
+
+                <div class="mail__hr__container" style="margin-left: 50px; margin-right: 50px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td class="mail__hr" style="border:none; border-top:solid 1px #fff; margin-bottom:0; margin-left:50px; margin-right:50px; margin-top:0; padding:0 !important; width:100%" width="100%"> </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+
+            <!--  -->
+
+
+
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <div class="widget-image" style="text-align:center" align="center">
+                    <table><tr><td style="padding: 0; margin: 0;">
+
+                        <div style="position: relative;">
+                            <img width="800" height="650" src="https://api.digitalstylelab.com/render_svg/17110/" usemap="#map_17110" alt="" style="height:650px; width:800px">
+
+
+                            <map name="map_17110">
+
+
+
+                                <area alt="" coords="170,47,366,345" href="https://www.farfetch.com/shopping/women/off-white-arrow-logo-hooded-sweatshirt-item-14852734.aspx?size=19" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="435,166,785,633" href="https://www.farfetch.com/shopping/women/gauge81-solna-spaghetti-strap-crop-top-item-15308853.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="79,276,228,651" href="https://www.farfetch.com/shopping/women/off-white-oversized-straight-track-pants-item-14901512.aspx?storeid=12572" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="194,404,346,457" href="https://www.farfetch.com/shopping/women/off-white-arthur-rectangle-frame-sunglasses-item-15284444.aspx?storeid=12572" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="63,104,220,142" href="https://www.farfetch.com/shopping/women/gucci-white-stretch-knit-logo-headband-item-12473139.aspx?storeid=10644" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="231,469,444,606" href="https://www.farfetch.com/shopping/women/nike-x-off-white-air-jordan-4-off-white-sail-sneakers-item-15625936.aspx?storeid=11218" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="243,222,407,363" href="https://www.farfetch.com/shopping/women/gauge81-solna-spaghetti-strap-crop-top-item-15308853.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                            </map>
+
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/off-white-arrow-logo-hooded-sweatshirt-item-14852734.aspx?size=19" class="maplink" style="position: absolute; top: 7%; left: 21%; width: 24%; height: 46%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/gauge81-solna-spaghetti-strap-crop-top-item-15308853.aspx?storeid=9359" class="maplink" style="position: absolute; top: 25%; left: 54%; width: 44%; height: 72%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/off-white-oversized-straight-track-pants-item-14901512.aspx?storeid=12572" class="maplink" style="position: absolute; top: 42%; left: 10%; width: 19%; height: 58%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/off-white-arthur-rectangle-frame-sunglasses-item-15284444.aspx?storeid=12572" class="maplink" style="position: absolute; top: 62%; left: 24%; width: 19%; height: 8%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/gucci-white-stretch-knit-logo-headband-item-12473139.aspx?storeid=10644" class="maplink" style="position: absolute; top: 16%; left: 8%; width: 20%; height: 6%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/nike-x-off-white-air-jordan-4-off-white-sail-sneakers-item-15625936.aspx?storeid=11218" class="maplink" style="position: absolute; top: 72%; left: 29%; width: 27%; height: 21%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/gauge81-solna-spaghetti-strap-crop-top-item-15308853.aspx?storeid=9359" class="maplink" style="position: absolute; top: 34%; left: 30%; width: 20%; height: 22%;"></a>
+
+
+
+
+
+                        </div>
+
+
+
+
+                    </td></tr></table>
+                </div>
+
+
+                <div class="mail__hr__container" style="margin-left: 50px; margin-right: 50px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td class="mail__hr" style="border:none; border-top:solid 1px #fff; margin-bottom:0; margin-left:50px; margin-right:50px; margin-top:0; padding:0 !important; width:100%" width="100%"> </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+
+            <!--  -->
+
+
+
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <div class="widget-image" style="text-align:center" align="center">
+                    <table><tr><td style="padding: 0; margin: 0;">
+
+                        <div style="position: relative;">
+                            <img width="800" height="650" src="https://api.digitalstylelab.com/render_svg/17111/" usemap="#map_17111" alt="" style="height:650px; width:800px">
+
+
+                            <map name="map_17111">
+
+
+
+                                <area alt="" coords="51,273,184,482" href="https://www.farfetch.com/shopping/women/alexander-wang-asymmetric-crocodile-effect-mini-skirt-item-15328225.aspx?storeid=9921" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="96,66,309,391" href="https://www.farfetch.com/shopping/women/off-white-ribbed-knitted-cropped-top-item-15284753.aspx?storeid=12572" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="347,63,751,600" href="https://www.farfetch.com/shopping/women/off-white-ribbed-knitted-cropped-top-item-15284753.aspx?storeid=12572" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="212,262,358,612" href="https://www.farfetch.com/shopping/women/off-white-pleated-panel-tailored-trousers-item-15284888.aspx?storeid=12572" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="147,458,310,609" href="https://www.farfetch.com/shopping/women/balenciaga-neo-classic-mini-top-handle-bag-item-15653836.aspx?storeid=10952" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                            </map>
+
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/alexander-wang-asymmetric-crocodile-effect-mini-skirt-item-15328225.aspx?storeid=9921" class="maplink" style="position: absolute; top: 42%; left: 6%; width: 17%; height: 32%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/off-white-ribbed-knitted-cropped-top-item-15284753.aspx?storeid=12572" class="maplink" style="position: absolute; top: 10%; left: 12%; width: 27%; height: 50%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/off-white-ribbed-knitted-cropped-top-item-15284753.aspx?storeid=12572" class="maplink" style="position: absolute; top: 10%; left: 43%; width: 50%; height: 83%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/off-white-pleated-panel-tailored-trousers-item-15284888.aspx?storeid=12572" class="maplink" style="position: absolute; top: 40%; left: 27%; width: 18%; height: 54%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/balenciaga-neo-classic-mini-top-handle-bag-item-15653836.aspx?storeid=10952" class="maplink" style="position: absolute; top: 71%; left: 18%; width: 20%; height: 23%;"></a>
+
+
+
+
+
+                        </div>
+
+
+
+
+                    </td></tr></table>
+                </div>
+
+
+                <div class="mail__hr__container" style="margin-left: 50px; margin-right: 50px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td class="mail__hr" style="border:none; border-top:solid 1px #fff; margin-bottom:0; margin-left:50px; margin-right:50px; margin-top:0; padding:0 !important; width:100%" width="100%"> </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+
+            <!--  -->
+
+
+
+
+
+
+
+            <!-- Products  -->
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <table width="100%">
+                    <tr>
+                        <td> </td>
+                        <td width="80%">
+
+                            <table class="widget-product" style="background-color:white; margin:0 auto; width:100%" bgcolor="white" width="100%">
+                                <tr>
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/mm6-maison-margiela-logo-print-long-sleeve-bodysuit-item-15368293.aspx" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/37c5a6fcfc3875ed29765958b321b406_N6ujDhq.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: logo-print long-sleeve bodysuit</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">MM6 Maison Margiela</div>
+                                                    <div style="font-size: 12px;color:black;">logo-print long-sleeve bodysuit</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/jacquemus-le-chiquito-bag-item-15450909.aspx?storeid=11461" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/a1ecfffa9175a30bd7021f11580cc0a8.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: Le Chiquito bag</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">Jacquemus</div>
+                                                    <div style="font-size: 12px;color:black;">Le Chiquito bag</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/stella-mccartney-eclipse-low-top-sneakers-item-15589980.aspx?storeid=9359" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/f45613ecbe3a3c8ff141c2de9ca1df73.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: Eclipse low-top sneakers</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">Stella McCartney</div>
+                                                    <div style="font-size: 12px;color:black;">Eclipse low-top sneakers</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+                                </tr>
+                            </table>
+
+                        </td>
+                        <td> </td>
+                    </tr>
+                </table>
+
+
+            </div>
+
+
+            <!--  -->
+
+
+
+
+
+
+
+            <!-- Products  -->
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <table width="100%">
+                    <tr>
+                        <td> </td>
+                        <td width="80%">
+
+                            <table class="widget-product" style="background-color:white; margin:0 auto; width:100%" bgcolor="white" width="100%">
+                                <tr>
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/no-ka-oi-polar-cut-out-mini-dress-item-15650664.aspx?fsb=1?storeid=10433" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/93ab65745adf1ff794685994b6a571ca.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: Polar cut-out mini dress</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">No Ka' Oi</div>
+                                                    <div style="font-size: 12px;color:black;">Polar cut-out mini dress</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/balenciaga-triple-s-chunky-sneakers-item-15659898.aspx?storeid=10952" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/624c560e3b82f860070b0057fab7c6e4_JWpK9Hi.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: Triple S chunky sneakers</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">Balenciaga</div>
+                                                    <div style="font-size: 12px;color:black;">Triple S chunky sneakers</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/men/vetements-logo-intarsia-crew-neck-jumper-item-15485154.aspx?storeid=9843" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/154829b7ef8766d9120f820301cd8daf.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: logo intarsia crew neck jumper</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">Vetements</div>
+                                                    <div style="font-size: 12px;color:black;">logo intarsia crew neck jumper</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+                                </tr>
+                            </table>
+
+                        </td>
+                        <td> </td>
+                    </tr>
+                </table>
+
+
+            </div>
+
+
+            <!--  -->
+
+
+
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <div class="widget-image" style="text-align:center" align="center">
+                    <table><tr><td style="padding: 0; margin: 0;">
+
+                        <div style="position: relative;">
+                            <img width="800" height="650" src="https://api.digitalstylelab.com/render_svg/17114/" usemap="#map_17114" alt="" style="height:650px; width:800px">
+
+
+                            <map name="map_17114">
+
+
+
+                                <area alt="" coords="241,236,373,647" href="https://www.farfetch.com/shopping/women/ottolinger-wrap-waist-patent-trousers-item-15913491.aspx?storeid=9473" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+
+
+                                <area alt="" coords="108,49,276,349" href="https://www.farfetch.com/shopping/women/simone-rocha-draped-cable-knit-jumper-item-15331967.aspx?storeid=9359" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="123,445,233,629" href="https://www.farfetch.com/shopping/women/coperni-swipe-leather-hobo-bag-item-15643516.aspx?storeid=9442" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                                <area alt="" coords="46,355,206,424" href="https://www.farfetch.com/shopping/women/jw-anderson-chain-loafer-mules-item-15742095.aspx?storeid=9155" shape="rect" style="border: #00000000 1px solid;" target="_blank">
+
+
+
+                            </map>
+
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/ottolinger-wrap-waist-patent-trousers-item-15913491.aspx?storeid=9473" class="maplink" style="position: absolute; top: 36%; left: 30%; width: 16%; height: 63%;"></a>
+
+
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/simone-rocha-draped-cable-knit-jumper-item-15331967.aspx?storeid=9359" class="maplink" style="position: absolute; top: 8%; left: 14%; width: 21%; height: 46%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/coperni-swipe-leather-hobo-bag-item-15643516.aspx?storeid=9442" class="maplink" style="position: absolute; top: 68%; left: 15%; width: 14%; height: 28%;"></a>
+
+
+
+                            <a href="https://www.farfetch.com/shopping/women/jw-anderson-chain-loafer-mules-item-15742095.aspx?storeid=9155" class="maplink" style="position: absolute; top: 55%; left: 6%; width: 20%; height: 11%;"></a>
+
+
+
+
+
+                        </div>
+
+
+
+
+                    </td></tr></table>
+                </div>
+
+
+                <div class="mail__hr__container" style="margin-left: 50px; margin-right: 50px;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td class="mail__hr" style="border:none; border-top:solid 1px #fff; margin-bottom:0; margin-left:50px; margin-right:50px; margin-top:0; padding:0 !important; width:100%" width="100%"> </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+
+            <!--  -->
+
+
+
+
+
+
+
+            <!-- Products  -->
+
+            <div class="mail__widget" style="flex-wrap:wrap; justify-content:center; margin:auto; padding-bottom:10px; vertical-align:middle; background-color:white; margin-left:0; margin-right:0; padding-top:10px" bgcolor="white" valign="middle">
+                <table width="100%">
+                    <tr>
+                        <td> </td>
+                        <td width="80%">
+
+                            <table class="widget-product" style="background-color:white; margin:0 auto; width:100%" bgcolor="white" width="100%">
+                                <tr>
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/ann-demeulemeester-knee-length-chunky-boots-item-15176619.aspx?storeid=9499" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/874162facb4ec854d66167dc4308c782.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: knee-length chunky boots</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">Ann Demeulemeester</div>
+                                                    <div style="font-size: 12px;color:black;">knee-length chunky boots</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/shopping/women/rosie-assoulin-cable-knit-cut-out-jumper-item-15143410.aspx?storeid=9359" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/6fbbd8d4c74fdbf810a80e15533e751c.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: cable knit cut-out jumper</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">Rosie Assoulin</div>
+                                                    <div style="font-size: 12px;color:black;">cable knit cut-out jumper</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+
+                                    <td class="widget-product__item-container" style="height:100%; vertical-align:top; width:33.3%" height="100%" valign="top" width="33.3%">
+                                        <div class="widget-product__item" style="max-height:353px; padding:10px; margin:10px">
+
+                                            <a href="https://www.farfetch.com/mo/shopping/women/prada-logo-bucket-hat-item-14452260.aspx?storeid=12113" class="widget-product__item-link disable_link" style="color:black; display:block; text-align:center; text-decoration:none" align="center">
+
+                                                <img src="https://s4o.imgix.net/media/public/372768865db696961945caef705bb03f_ES0gzHx.jpeg?w=450&amp;h=674" alt="" class="widget-product__img" style="max-width:230px; width:100%" width="100%">
+                                                <div class="widget-product__item-description" style="padding: 10px; text-align: center">
+                                                    <!-- <div style="font-size: 12px; margin-bottom: 0">Image: logo bucket hat</div> -->
+                                                    <div style="font-size: 12px;font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif;text-transform: uppercase;font-weight: bold;">Prada</div>
+                                                    <div style="font-size: 12px;color:black;">logo bucket hat</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </td>
+
+
+                                </tr>
+                            </table>
+
+                        </td>
+                        <td> </td>
+                    </tr>
+                </table>
+
+
+            </div>
+
+
+            <!--  -->
+
+
+
+
+
+            <div class="mail__signature" style="-webkit-column-break-inside:avoid; background-color:white; display:block; margin:auto; padding-bottom:20px; padding-top:20px; page-break-inside:avoid; margin-bottom:0; margin-left:0; margin-right:0; text-align:center" bgcolor="white" align="center">
+                <table style="margin:0 auto; max-width:100% !important; width:300px" width="300">
+                    <tr>
+                        <!-- Avatar -->
+
+                        <!-- Links -->
+                        <td class="mail__signature__links" style="padding-left:60px; text-align:left" align="left">
+                            <div style="line-height: 1.1;">
+                                <div class="mail__signature__title" style="color: black;font-size:13px; white-space: nowrap; font-family: 'FarfetchBasisBeta', 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase;">Your Private Client Stylist</div>
+                                <div class="mail__signature__name" style='margin-bottom:0 !important; color:black; font-family:"FarfetchBasisBeta", "Helvetica Neue", Arial, sans-serif; font-size:28px; font-style:normal; margin:10px 0'>Christine Mou</div>
+                            </div>
+                            <ul style="list-style: none; margin: 0; padding: 0;">
+
+                                <li style="padding: 4px;">
+                                </li>
+                                <li class="mail__signature-link" style="display:inline-block; margin:0; color:black">
+                                    <a href="tel:(503)%20580-3055" style='color:black; text-decoration:none; font-family:"FarfetchBasisBeta", "Helvetica Neue", Arial, sans-serif; font-size:13px; margin-right:0; white-space:nowrap'>
+                                        M: (503) 580-3055</a>
+                                </li>
+
+                                <li style="padding: 4px; ">
+                                </li>
+                                <li class="mail__signature-link" style="display:inline-block; margin:0">
+                                    <a href="mailto:christine.mou@farfetch.com" style='color:black; text-decoration:none; font-family:"FarfetchBasisBeta", "Helvetica Neue", Arial, sans-serif; font-size:13px; margin-right:0; white-space:nowrap'>
+                                        E: christine.mou@farfetch.com
+                                    </a>
+                                </li>
+
+                                <li style="padding: 4px; ">
+                                </li>
+                                <li class="mail__signature-link" style="display:inline-block; margin:0">
+                                    <a href="https://wa.me/5035803055" style='color:#000; text-decoration:none; font-family:"FarfetchBasisBeta", "Helvetica Neue", Arial, sans-serif; font-size:13px; margin-right:0; vertical-align:middle; white-space:nowrap' valign="middle">
+                                        <img src="https://api.digitalstylelab.com/media//icons/whatsapp.png" height="16" style="vertical-align:middle;">
+                                        WhatsApp
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+
+
+            </div>
+
+
+
+
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+</div>
+
+<script>
+
+    var pageHeight = (window.customSize)? window.customSize : 1056;
+
+    function addProductWidget(page, pWidget) {
+
+        console.log("Add product widget");
+        console.log(pWidget)
+        console.log("===================")
+        var itemClone = pWidget.cloneNode(true);
+        var total = 0;
+        var rows = pWidget.querySelectorAll('tr');
+        var count = 0;
+
+        if (rows.length) {
+            // Remove rows from widget, copy over from clone individually to fit to page
+            for (var i = 0; i < rows.length; i++) { rows[i].parentNode.removeChild(rows[i]); }
+
+            var nextRow = itemClone.querySelector('tr');
+            var rowHeight = getHeight(nextRow);
+            while (nextRow && count < 2 && total + rowHeight < pageHeight) {
+                pWidget.querySelector('tbody').appendChild(nextRow);
+                total += rowHeight;
+                nextRow = itemClone.querySelector('tr');
+                count++;
+            }
+
+            page.appendChild(pWidget);
+            console.log("Product widget split and added to page");
+
+            // Recurse on any remaining rows
+            if (itemClone.querySelector('tr')) { return addProductWidget(createPage(), itemClone); }
+        }
+
+        return total;
+
+    }
+
+    function createPage() {
+        console.log("Create new page");
+        var print = document.getElementById('print');
+        var pageWrapper = document.createElement("div")
+        pageWrapper.setAttribute('class', 'pdf-page');
+        page = document.createElement("div");
+        pageWrapper.appendChild(page);
+        print.appendChild(pageWrapper);
+
+        return page;
+    }
+
+    function getHeight(element) {
+        element.style.visibility = "hidden";
+        document.body.appendChild(element);
+        var height = element.offsetHeight + 0;
+        document.body.removeChild(element);
+        element.style.visibility = "visible";
+        return height;
+    }
+
+
+    // Note: Must use vanilla Javascript support whtmltopdf and other pdf converters which do not support es6 and jQuery
+    window.onload = function () {
+
+        console.log('---------------------- Stage 1 ------------------------');
+
+        var total = 0
+        var widgets = document.querySelectorAll("#main > div.mail__container > div");
+        for (var i = 0; i < widgets.length; i++) {
+
+            var pages = document.querySelectorAll('#print > div.pdf-page > div');
+            var page = pages[pages.length - 1];
+
+            var itemHeight = widgets[i].offsetHeight;
+
+            var delta = (total + itemHeight) - pageHeight;
+            // Create and add to a new page
+            if (delta > 100) {
+                console.log("Create new page. Delta: ",   delta)
+                page = createPage();
+                total = 0;
+
+                if (itemHeight >= pageHeight && widgets[i].querySelector("table.widget-product")) {
+                    total = addProductWidget(page, widgets[i]);
+                    continue;
+                }
+            }
+
+            total += itemHeight;
+            page.appendChild(widgets[i]);
+            console.log("Widget added to page ", i);
+        }
+
+        /*     var links = document.querySelectorAll("a.maplink");
+            console.log(links.length);
+            for (var i = 0; i < links.length; i++) {
+                var frame = links[i].getAttribute('data-frame').replace(/'/g, '"');
+                frame = JSON.parse(frame);
+                var images = links[i].querySelector("#" + image.getAttribute('data-image-id'));
+                var image = images[images.length -1];
+
+                image.style.top = img.offsetTop + frame.top;
+                image.style.left = mg.offsetLeft + frame.left;
+                image.style.width = frame.width;
+                image.style.height = frame.height;
+
+                console.log("Image links updated");
+            }
+     */
+        // Hide extra element
+        document.querySelector("#main > div.mail__container").style.display = "none";
+        console.log('---------------------- COMPLETE------------------------');
+
+        if (window.pdfdone) {
+            window.pdfdone();
+        }
+
+        if (page) {
+            var readyElem = document.createElement("div");
+            readyElem.setAttribute('id', 'pdf-ready');
+            page.appendChild(readyElem);
+        }
+        window.status = 'ready';
+    }
+
+</script>
+<script type="text/javascript" src="assemble_pdf.js">
+
+</script>
+
+</body>
+</html>
+
