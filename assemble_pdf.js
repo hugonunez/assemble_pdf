@@ -34,11 +34,10 @@ function decoupledAssemble({widgets, pages = [...getPages()], pageHeight = CONST
         //Determine if a new page should be created and filled with the splitted widget.
         if (delta > skipPageTreshhold) {
             sumOfHeights = 0;
-            currentPage = createPage({print});
+            currentPage = createPage({print, pages});
         }
         sumOfHeights += itemHeight;
         currentPage.appendChild(widgets[i]);
-        pages.push(currentPage)
     }
     hideElements();
     markAsReady();
