@@ -13,10 +13,13 @@ window.onload = onLoad || fallbackOnload;
 //assemble pdf onload function
 function onLoad () {
     const widgets = getWidgets();
+    const pages = [...getPages()]
+    const parsedWidgets = parseWidgets(widgets)
+    console.log({widgets, parsedWidgets})
     const allOK = widgets.length > 0
     if (allOK) {
         console.log('Using assemble_pdf onLoad funtion')
-        return decoupledAssemble({widgets})
+        return decoupledAssemble({widgets, pages})
     }
     console.log('Using fallback onLoad funtion')
     console.warn({MSG: "Could not load assemble_pdf, required elements returned: ", widgets, })
@@ -35,6 +38,9 @@ function decoupledAssemble({widgets, pages = [...getPages()], pageHeight = CONST
         if (delta > skipPageTreshhold) {
             sumOfHeights = 0;
             currentPage = createPage({print, pages});
+            if (itemHeight >= pageHeight && getTableFromWidget(widgets[i])) {
+                total = splitWidgetIntoPage(page, widgets[i]);
+            }
         }
         sumOfHeights += itemHeight;
         currentPage.appendChild(widgets[i]);
@@ -80,7 +86,7 @@ function getTableFromWidget(widget){
     return widget.querySelector(CONSTANTS.TABLE_WIDGET_SELECTOR)
 }
 function parseWidgets(widgets) {
-    return widgets
+    return [...widgets].map(w => makeWidget(w))
 }
 function hideElements() {
     document.querySelector(CONSTANTS.ALL_MAIL_CONTAINERS).style.display = "none";
@@ -154,4 +160,20 @@ function getHeight(element) {
     document.body.removeChild(element);
     element.style.visibility = "visible";
     return height;
+}
+
+function makeWidget (rawWidget){
+    const type = getWidgetType(rawWidget.classList);
+    return {
+        type,
+        offsetHeight: rawWidget.offsetHeight,
+        widget: rawWidget,
+        rows: getRows(rawWidget)
+    }
+}
+function getWidgetType (classList){
+    if(classList.length === 0){return 'unclassified'}
+    if(classList.contains('mail__signature')){return 'mail__signature'}
+    if(classList.contains('mail__intro-text')){return 'mail__intro-text'};
+    return 'mail_widget'
 }
