@@ -4,7 +4,8 @@ const CONSTANTS = {
     TABLE_WIDGET_SELECTOR: "table.widget-product",
     ALL_MAIL_CONTAINERS: "#main > div.mail__container",
     PAGE_HEIGHT: (window.customSize)? window.customSize : 1056,
-    PRINT_SELECTOR: 'print'
+    PRINT_SELECTOR: 'print',
+    DEFAULT_SKIP_PAGE_TRESHHOLD: 100
 }
 //Override onload funtion or use fallback
 const fallbackOnload = window.onload;
@@ -13,55 +14,62 @@ window.onload = onLoad || fallbackOnload;
 //assemble pdf onload function
 function onLoad () {
     const widgets = getWidgets();
+    const parsedWidgets = parseWidgets(widgets, { omit: ['row', 'cell', 'widget', 'table', 'tbody'] })
     const pages = [...getPages()]
-    const parsedWidgets = parseWidgets(widgets)
-    console.log({widgets, parsedWidgets})
-    const allOK = widgets.length > 0
+    const print = getPrint();
+    const allOK = widgets.length && print && pages.length
     if (allOK) {
         console.log('Using assemble_pdf onLoad funtion')
-        return decoupledAssemble({widgets, pages})
+        return decoupledAssemble({
+            pages,
+            parsedWidgets,
+            print,
+            skipPageTreshhold: CONSTANTS.DEFAULT_SKIP_PAGE_TRESHHOLD,
+            pageHeight: CONSTANTS.PAGE_HEIGHT,
+        })
     }
     console.log('Using fallback onLoad funtion')
     console.warn({MSG: "Could not load assemble_pdf, required elements returned: ", widgets, })
     return null
 }
-
-function decoupledAssemble({widgets, pages = [...getPages()], pageHeight = CONSTANTS.PAGE_HEIGHT, skipPageTreshhold = 100, print = getPrint()}) {
+function decoupledAssemble({parsedWidgets, pages = [...getPages()], pageHeight, skipPageTreshhold, print}) {
     let sumOfHeights = 0;
     //Iterate over items and assign them to a page
-    for (let i = 0; i < widgets.length; i++) {
-        const itemHeight = widgets[i].offsetHeight;
+    for (let i = 0; i < parsedWidgets.length; i++) {
+        const itemHeight = parsedWidgets[i].offsetHeight;
         //Grab last page since previous ones are filled
         let currentPage = pages[pages.length -1];
         const delta = (sumOfHeights + itemHeight) - pageHeight;
         //Determine if a new page should be created and filled with the splitted widget.
         if (delta > skipPageTreshhold) {
             sumOfHeights = 0;
-            currentPage = createPage({print, pages});
-            if (itemHeight >= pageHeight && getTableFromWidget(widgets[i])) {
-                total = splitWidgetIntoPage(page, widgets[i]);
+            //Update currentPage state with new one
+            currentPage = createNewPage({print});
+            pages.push(currentPage);
+            if (itemHeight >= pageHeight && parsedWidgets[i].table) { //Replace hasTable
+                total = splitWidgetIntoPage(page, parsedWidgets[i].widget);
             }
         }
         sumOfHeights += itemHeight;
-        currentPage.appendChild(widgets[i]);
+        const a = parsedWidgets[i].widget;
+        console.log({adasdsad:  a})
+        currentPage.appendChild(parsedWidgets[i].widget);
     }
     hideElements();
     markAsReady();
 }
-
-
-//Given the arrays of widgets and pages, assemble the objects on an HTML
-//[{h: widgets[i].offsetHeight}]
 function assembleHTML({widgets}) {
+    //Given the arrays of widgets and pages, assemble the objects on an HTML
+    //[{h: widgets[i].offsetHeight}]
     let sumOfHeights = 0
     for (let i = 0; i < widgets.length; i++) {
         const pages = getPages();
         let page = pages[pages.length - 1];
-        var itemHeight = widgets[i].offsetHeight;
-        var delta = (sumOfHeights + itemHeight) - CONSTANTS.PAGE_HEIGHT;
+        const itemHeight = widgets[i].offsetHeight;
+        const delta = (sumOfHeights + itemHeight) - CONSTANTS.PAGE_HEIGHT;
         // Create and add to a new page
         if (delta > 100) {
-            page = createPage({print, pages});
+            page = createNewPage({print, pages});
             sumOfHeights = 0;
             const table = getTableFromWidget(widgets[i])
             console.log({table, itemHeight, pageHeight, codition: itemHeight > pageHeight && table})
@@ -86,10 +94,14 @@ function getTableFromWidget(widget){
     return widget.querySelector(CONSTANTS.TABLE_WIDGET_SELECTOR)
 }
 function parseWidgets(widgets) {
-    return [...widgets].map(w => makeWidget(w))
+    return [...widgets].map(w =>makeWidget(w))
 }
 function hideElements() {
     document.querySelector(CONSTANTS.ALL_MAIL_CONTAINERS).style.display = "none";
+}
+function omitProperty(properties = [], fun, ...args){
+    const res = fun(args[0], args[1]);
+    return {...res, ...(properties.map(p => ({[p]: undefined})))}
 }
 function markAsReady() {
     console.log('---------------------- COMPLETE------------------------');
@@ -108,16 +120,15 @@ function splitWidgetIntoPage(page, pWidget) {
     var itemClone = pWidget.cloneNode(true);
     var sumOfHeights = 0;
     var count = 0;
-    var rows = getRows(pWidget);
-    if (rows.length) {
+    if (pWidget.rows.length) {
         // Remove rows from widget, copy over from clone individually to fit to page
-        for (var i = 0; i < rows.length; i++) {
-            rows[i].parentNode.removeChild(rows[i]);
+        for (var i = 0; i < pWidget.rows.length; i++) {
+            pWidget.rows[i].row.parentNode.removeChild(pWidget.rows[i].row);
         }
         let nextRow = itemClone.querySelector('tr');
         const rowHeight = getHeight(nextRow);
         while (nextRow && count < 2 && sumOfHeights + rowHeight < pageHeight) {
-            getTbody(pWidget).appendChild(nextRow);
+            pWidget.querySelector('tbody').appendChild(nextRow);
             sumOfHeights += rowHeight;
             nextRow = itemClone.querySelector('tr');
             count++;
@@ -127,23 +138,20 @@ function splitWidgetIntoPage(page, pWidget) {
         // Recurse on any remaining rows
         const rows = getRows(itemClone)
         console.log({rows})
-        if (rows) { return splitWidgetIntoPage(createPage(), itemClone); }
+        if (rows) { return splitWidgetIntoPage(createNewPage(), itemClone); }
     }
 
     return sumOfHeights;
 }
-
 function getRows(widget) {
     return widget.querySelectorAll('tr')
 }
-
 function getTbody(widget) {
     return widget.querySelector('tbody')
 }
 function getPrint() {
     return document.getElementById(CONSTANTS.PRINT_SELECTOR)
 }
-
 function getHeight(element) {
     element.style.visibility = "hidden";
     document.body.appendChild(element);
@@ -152,13 +160,12 @@ function getHeight(element) {
     element.style.visibility = "visible";
     return height;
 }
-function createPage({print, pages = []}) {
+function createNewPage({print}) {
     const page = document.createElement("div");
     const pageWrapper = document.createElement("div")
     pageWrapper.setAttribute('class', 'pdf-page');
     pageWrapper.appendChild(page);
     print.appendChild(pageWrapper);
-    pages.push(page);
     return page;
 }
 function makeWidget (rawWidget){
@@ -166,15 +173,17 @@ function makeWidget (rawWidget){
     return {
         type,
         offsetHeight: rawWidget.offsetHeight,
+        table: getTableFromWidget(rawWidget),
+        tbody: getTbody(rawWidget),
         widget: rawWidget,
-        rows: [...getRows(rawWidget)].map(item => (makeRow(item)))
+        rows: [...getRows(rawWidget)].map(item => (makeRow(item))),
     }
 }
 function makeRow(item){
     const rawCells = item.querySelectorAll('td');
     const cells = [...rawCells].map(el => (makeCell(el)))
     const isHorizontalRow = !!cells.find(el => el.cell.classList.contains('mail__hr'))
-    return {row: item, cells, isHorizontalRow}
+    return {row: item, cells, isHorizontalRow, height: getHeight(item)}
 }
 function makeCell(item) {
     const img = item.querySelector('img');
