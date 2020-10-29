@@ -13,11 +13,14 @@ window.onload = onLoad || fallbackOnload;
 
 //assemble pdf onload function
 function onLoad () {
+    console.log("FLAG")
     const widgets = getWidgets();
-    const parsedWidgets = parseWidgets(widgets, { omit: ['row', 'cell', 'widget', 'table', 'tbody'] })
+    const parsedWidgets = parseWidgets(widgets)
     const pages = [...getPages()]
     const print = getPrint();
     const allOK = widgets.length && print && pages.length
+    console.log("FLAG 2" )
+    console.log({allOK,parsedWidgets})
     if (allOK) {
         console.log('Using assemble_pdf onLoad funtion')
         return decoupledAssemble({
@@ -32,7 +35,8 @@ function onLoad () {
     console.warn({MSG: "Could not load assemble_pdf, required elements returned: ", widgets, })
     return null
 }
-function decoupledAssemble({parsedWidgets, pages = [...getPages()], pageHeight, skipPageTreshhold, print}) {
+function decoupledAssemble({parsedWidgets, pages, pageHeight, skipPageTreshhold, print}) {
+    console.log({parsedWidgets, pages, pageHeight, skipPageTreshhold, print})
     let sumOfHeights = 0;
     //Iterate over items and assign them to a page
     for (let i = 0; i < parsedWidgets.length; i++) {
@@ -47,13 +51,14 @@ function decoupledAssemble({parsedWidgets, pages = [...getPages()], pageHeight, 
             currentPage = createNewPage({print});
             pages.push(currentPage);
             if (itemHeight >= pageHeight && parsedWidgets[i].table) { //Replace hasTable
+                console.log("LAB")
                 total = splitWidgetIntoPage(page, parsedWidgets[i].widget);
             }
         }
         sumOfHeights += itemHeight;
         const a = parsedWidgets[i].widget;
-        console.log({adasdsad:  a})
-        currentPage.appendChild(parsedWidgets[i].widget);
+        console.log({a:  a})
+        currentPage.appendChild(a);
     }
     hideElements();
     markAsReady();
@@ -144,7 +149,7 @@ function splitWidgetIntoPage(page, pWidget) {
     return sumOfHeights;
 }
 function getRows(widget) {
-    return widget.querySelectorAll('tr')
+    return nodeListToIterable(widget.querySelectorAll('tr'))
 }
 function getTbody(widget) {
     return widget.querySelector('tbody')
@@ -170,26 +175,33 @@ function createNewPage({print}) {
 }
 function makeWidget (rawWidget){
     const type = getWidgetType(rawWidget.classList);
+    const rows = getRows(rawWidget)
+    console.log({rawWidget, rows})
     return {
+        widget: rawWidget,
         type,
         offsetHeight: rawWidget.offsetHeight,
         table: getTableFromWidget(rawWidget),
         tbody: getTbody(rawWidget),
-        widget: rawWidget,
-        rows: [...getRows(rawWidget)].map(item => (makeRow(item))),
+        rows: rows.map(item => (makeRow(item))),
     }
 }
 function makeRow(item){
-    const rawCells = item.querySelectorAll('td');
-    const cells = [...rawCells].map(el => (makeCell(el)))
+    const rawCells = nodeListToIterable(item.querySelectorAll('td'));
+    const cells = rawCells.map(el => (makeCell(el)))
     const isHorizontalRow = !!cells.find(el => el.cell.classList.contains('mail__hr'))
-    return {row: item, cells, isHorizontalRow, height: getHeight(item)}
+    return {row: item, cells, isHorizontalRow/*, height: getHeight(item)*/}
 }
 function makeCell(item) {
     const img = item.querySelector('img');
     const map = item.querySelector('map');
-    const rawLinks = [...(item.querySelectorAll('a'))];
+    const rawLinks = nodeListToIterable(item.querySelectorAll('a'))
     return {cell: item, img: makeImage(img), map, links: rawLinks.map(item => (makeLink(item)))}
+}
+function nodeListToIterable(nodeList) {
+    const items = [];
+    nodeList.forEach(el => items.push(el))
+    return items
 }
 function makeImage(item) {
     if (!item) {
