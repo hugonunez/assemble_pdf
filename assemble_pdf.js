@@ -143,15 +143,6 @@ function getTbody(widget) {
 function getPrint() {
     return document.getElementById(CONSTANTS.PRINT_SELECTOR)
 }
-function createPage({print, pages = []}) {
-    const page = document.createElement("div");
-    const pageWrapper = document.createElement("div")
-    pageWrapper.setAttribute('class', 'pdf-page');
-    pageWrapper.appendChild(page);
-    print.appendChild(pageWrapper);
-    pages.push(page);
-    return page;
-}
 
 function getHeight(element) {
     element.style.visibility = "hidden";
@@ -161,14 +152,59 @@ function getHeight(element) {
     element.style.visibility = "visible";
     return height;
 }
-
+function createPage({print, pages = []}) {
+    const page = document.createElement("div");
+    const pageWrapper = document.createElement("div")
+    pageWrapper.setAttribute('class', 'pdf-page');
+    pageWrapper.appendChild(page);
+    print.appendChild(pageWrapper);
+    pages.push(page);
+    return page;
+}
 function makeWidget (rawWidget){
     const type = getWidgetType(rawWidget.classList);
     return {
         type,
         offsetHeight: rawWidget.offsetHeight,
         widget: rawWidget,
-        rows: getRows(rawWidget)
+        rows: [...getRows(rawWidget)].map(item => (makeRow(item)))
+    }
+}
+function makeRow(item){
+    const rawCells = item.querySelectorAll('td');
+    const cells = [...rawCells].map(el => (makeCell(el)))
+    const isHorizontalRow = !!cells.find(el => el.cell.classList.contains('mail__hr'))
+    return {row: item, cells, isHorizontalRow}
+}
+function makeCell(item) {
+    const img = item.querySelector('img');
+    const map = item.querySelector('map');
+    const rawLinks = [...(item.querySelectorAll('a'))];
+    return {cell: item, img: makeImage(img), map, links: rawLinks.map(item => (makeLink(item)))}
+}
+function makeImage(item) {
+    if (!item) {
+        return null
+    }
+    return {
+        img: item,
+        src: item.src,
+        width: item.width,
+        height: item.height
+    }
+}
+function makeLink(item) {
+    const style = getComputedStyle(item);
+    return {
+        link: item,
+        href: item.href,
+        style: {
+            position: style.getPropertyValue('position'),
+            top: style.getPropertyValue('top'),
+            left: style.getPropertyValue('left'),
+            width: style.getPropertyValue('width'),
+            height: style.getPropertyValue('height')
+        }
     }
 }
 function getWidgetType (classList){
