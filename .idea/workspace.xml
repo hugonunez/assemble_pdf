@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4c8bc428-0233-4139-8547-801db4ef8f8e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assemble_pdf.js" beforeDir="false" afterPath="$PROJECT_DIR$/assemble_pdf.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -47,7 +48,7 @@
       <workItem from="1603976723452" duration="9138000" />
       <workItem from="1603987289158" duration="3685000" />
       <workItem from="1603993709654" duration="5198000" />
-      <workItem from="1604062744717" duration="3999000" />
+      <workItem from="1604062744717" duration="6126000" />
     </task>
     <servers />
   </component>
@@ -55,10 +56,10 @@
     <option name="version" value="3" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="686" y="292" width="620" height="522" key="find.popup" timestamp="1603890988749">
+    <state x="686" y="292" width="620" height="522" key="find.popup" timestamp="1604068403826">
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
-    <state x="686" y="292" width="620" height="522" key="find.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1603890988749" />
+    <state x="686" y="292" width="620" height="522" key="find.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604068403826" />
     <state x="660" y="252" key="run.anything.popup" timestamp="1604003147087">
       <screen x="72" y="27" width="1848" height="1053" />
     </state>

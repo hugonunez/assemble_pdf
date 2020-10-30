@@ -38,8 +38,9 @@ function assemblePDF({items, pages, pageHeight, skipPageTreshhold, print}) {
             sumOfHeights = 0;
             //Update currentPage state with new one
             currentPage = Commands.createNewPage({print, pages});
-            if (itemHeight >= pageHeight && items[i].table) { //Replace hasTable
-                sumOfHeights = Commands.splitWidgetIntoPage(page, items[i].widget);
+            console.log({pageHeight, itemHeight, CO: constants.PAGE_HEIGHT})
+            if ((itemHeight >= pageHeight) && items[i].table && !items[i].isHorizontalRow) { //Replace hasTable
+                sumOfHeights = Commands.splitWidgetIntoPage({page: currentPage, pWidget: items[i], pages, print});
                 continue;
             }
         }
@@ -54,7 +55,8 @@ const constants = {
     ALL_PAGES_SELECTOR: '#print > div.pdf-page > div',
     TABLE_WIDGET_SELECTOR: "table.widget-product",
     ALL_MAIL_CONTAINERS: "#main > div.mail__container",
-    PAGE_HEIGHT: (window.customSize)? window.customSize : 1056,
+    /*1056*/
+    PAGE_HEIGHT: (window.customSize)? window.customSize : 300,
     PRINT_SELECTOR: 'print',
     DEFAULT_SKIP_PAGE_TRESHHOLD: 100
 }
@@ -72,7 +74,7 @@ const Factories = {
         }
     },
      makeRow(item){
-        const rawCells = Utils.nodeListToIterable(item.querySelectorAll('td'));
+        const rawCells = Getters.getCells(item);
         const cells = rawCells.map(el => (this.makeCell(el)))
         const isHorizontalRow = !!cells.find(el => el.cell.classList.contains('mail__hr'))
         return {row: item, cells, isHorizontalRow/*, height: getHeight(item)*/}
@@ -111,21 +113,16 @@ const Factories = {
 }
 const Getters = {
     getRows(widget) {
-        return Utils.nodeListToIterable(widget.querySelectorAll('tr'))
+        return Utils.nodeListToIterable(widget.querySelectorAll('tr'));
+    },
+    getCells(item) {
+        return Utils.nodeListToIterable(item.querySelectorAll('td'));
     },
     getTbody(widget) {
         return widget.querySelector('tbody')
     },
     getPrint() {
         return document.getElementById(constants.PRINT_SELECTOR)
-    },
-    getHeight(element) {
-        element.style.visibility = "hidden";
-        document.body.appendChild(element);
-        const height = element.offsetHeight + 0;
-        document.body.removeChild(element);
-        element.style.visibility = "visible";
-        return height;
     },
     getWidgets() {
         return document.querySelectorAll(constants.ALL_WIDGETS_SELECTOR);
@@ -138,6 +135,9 @@ const Getters = {
     }
 }
 const Commands = {
+    selfRemoveFromDOM(item) {
+        item.parentNode.removeChild(item)
+    },
     hideElements() {
         document.querySelector(constants.ALL_MAIL_CONTAINERS).style.display = "none";
     },
@@ -154,7 +154,7 @@ const Commands = {
         }
         window.status = 'ready';
     },
-    createNewPage({print, pages}) {
+    createNewPage({print = Getters.getPrint(), pages}) {
         const page = document.createElement("div");
         const pageWrapper = document.createElement("div")
         pageWrapper.setAttribute('class', 'pdf-page');
@@ -163,29 +163,31 @@ const Commands = {
         pages.push(page);
         return page;
     },
-    splitWidgetIntoPage(page, pWidget) {
-        const itemClone = pWidget.cloneNode(true);
+    splitWidgetIntoPage({page, pWidget, pages, print}) {
+        console.log({page, pWidget, pages})
+        const itemClone = pWidget.widget.cloneNode(true);
         let sumOfHeights = 0;
         let count = 0;
-        const rows = Getters.getRows(pWidget)
-        if (rows.length) {
+        if (pWidget.rows.length) {
             // Remove rows from widget, copy over from clone individually to fit to page
             for (let i = 0; i < pWidget.rows.length; i++) {
-                pWidget.rows[i].row.parentNode.removeChild(pWidget.rows[i].row);
+                Commands.selfRemoveFromDOM(pWidget.rows[i].row)
             }
             let nextRow = itemClone.querySelector('tr');
             const rowHeight = Utils.getHeight(nextRow);
             while (nextRow && count < 2 && sumOfHeights + rowHeight < pageHeight) {
-                pWidget.querySelector('tbody').appendChild(nextRow);
+                console.log({pWidget})
+                pWidget.tbody.appendChild(nextRow);
                 sumOfHeights += rowHeight;
                 nextRow = itemClone.querySelector('tr');
                 count++;
             }
-            page.appendChild(pWidget);
+            page.appendChild(pWidget.widget);
             // Recurse on any remaining rows
-            const rows = Utils.getRows(itemClone)
-            if (rows) { return this.splitWidgetIntoPage(createNewPage(), itemClone); }
+            const rows = Getters.getRows(itemClone)
+            if (rows) { return this.splitWidgetIntoPage(this.createNewPage({print, pages}), itemClone); }
         }
+        console.count("SPLIT")
 
         return sumOfHeights;
     }
@@ -198,6 +200,15 @@ const Utils = {
         const res = fun(args[0], args[1]);
         return {...res, ...(properties.map(p => ({[p]: undefined})))}
     },
+    getHeight(element) {
+        element.style.visibility = "hidden";
+        document.body.appendChild(element);
+        const height = element.offsetHeight + 0;
+        document.body.removeChild(element);
+        element.style.visibility = "visible";
+        return height;
+    },
+
     getWidgetType (classList){
         if(classList.length === 0){return 'unclassified'}
         if(classList.contains('mail__signature')){return 'mail__signature'}
