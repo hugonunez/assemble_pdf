@@ -182,7 +182,6 @@ const Commands = {
                 count++;
             }
             page.appendChild(pWidget);
-            console.log("Product widget split and added to page");
             // Recurse on any remaining rows
             const rows = Utils.getRows(itemClone)
             if (rows) { return this.splitWidgetIntoPage(createNewPage(), itemClone); }
