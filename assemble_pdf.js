@@ -1,47 +1,37 @@
-const CONSTANTS = {
-    ALL_WIDGETS_SELECTOR: "#main > div.mail__container > div",
-    ALL_PAGES_SELECTOR: '#print > div.pdf-page > div',
-    TABLE_WIDGET_SELECTOR: "table.widget-product",
-    ALL_MAIL_CONTAINERS: "#main > div.mail__container",
-    PAGE_HEIGHT: (window.customSize)? window.customSize : 1056,
-    PRINT_SELECTOR: 'print',
-    DEFAULT_SKIP_PAGE_TRESHHOLD: 100
-}
+
 //Override onload funtion or use fallback
 const fallbackOnload = window.onload;
 window.onload = onLoad || fallbackOnload;
 
 //assemble pdf onload function
 function onLoad () {
-    console.log("FLAG")
     const widgets = Getters.getWidgets();
     const parsedWidgets = Utils.parseWidgets(widgets)
-    const pages = [...Getters.getPages()]
+    const pages = Utils.nodeListToIterable(Getters.getPages())
     const print = Getters.getPrint();
-    const allOK = widgets.length && print && pages.length
-    console.log("FLAG 2" )
-    console.log({allOK,parsedWidgets})
-    if (allOK) {
+    const validated = Utils.validateRequiredParams(widgets, parsedWidgets, pages, print)
+    if (validated) {
         console.log('Using assemble_pdf onLoad funtion')
-        return decoupledAssemble({
+        return assemblePDF({
             pages,
-            parsedWidgets,
+            items: parsedWidgets,
             print,
-            skipPageTreshhold: CONSTANTS.DEFAULT_SKIP_PAGE_TRESHHOLD,
-            pageHeight: CONSTANTS.PAGE_HEIGHT,
+            skipPageTreshhold: constants.DEFAULT_SKIP_PAGE_TRESHHOLD,
+            pageHeight: constants.PAGE_HEIGHT,
         })
     }
     console.log('Using fallback onLoad funtion')
-    console.warn({MSG: "Could not load assemble_pdf, required elements returned: ", widgets, })
+    console.warn({MSG: "Could not load assemble_pdf, required elements returned: ", widgets, parsedWidgets, pages, print})
     return null
 }
-function decoupledAssemble({parsedWidgets, pages, pageHeight, skipPageTreshhold, print}) {
+function assemblePDF({items, pages, pageHeight, skipPageTreshhold, print}) {
     let sumOfHeights = 0;
-    //Iterate over items and assign them to a page
-    for (let i = 0; i < parsedWidgets.length; i++) {
-        const itemHeight = parsedWidgets[i].offsetHeight;
+    //Iterate over widgets and assign them to a page
+    for (let i = 0; i < items.length; i++) {
+        const itemHeight = items[i].offsetHeight;
         //Grab last page since previous ones are filled
         let currentPage = pages[pages.length -1];
+        //Delta is equal to the prev sum of heights + the current item height
         const delta = (sumOfHeights + itemHeight) - pageHeight;
         //Determine if a new page should be created and filled with the splitted widget.
         if (delta > skipPageTreshhold) {
@@ -49,16 +39,24 @@ function decoupledAssemble({parsedWidgets, pages, pageHeight, skipPageTreshhold,
             //Update currentPage state with new one
             currentPage = Commands.createNewPage({print});
             pages.push(currentPage);
-            if (itemHeight >= pageHeight && parsedWidgets[i].table) { //Replace hasTable
-                console.log("LAB")
-                total = Commands.splitWidgetIntoPage(page, parsedWidgets[i].widget);
+            if (itemHeight >= pageHeight && items[i].table) { //Replace hasTable
+                total = Commands.splitWidgetIntoPage(page, items[i].widget);
             }
         }
         sumOfHeights += itemHeight;
-        currentPage.appendChild(parsedWidgets[i].widget);
+        currentPage.appendChild(items[i].widget);
     }
     Commands.hideElements();
     Commands.markAsReady();
+}
+const constants = {
+    ALL_WIDGETS_SELECTOR: "#main > div.mail__container > div",
+    ALL_PAGES_SELECTOR: '#print > div.pdf-page > div',
+    TABLE_WIDGET_SELECTOR: "table.widget-product",
+    ALL_MAIL_CONTAINERS: "#main > div.mail__container",
+    PAGE_HEIGHT: (window.customSize)? window.customSize : 1056,
+    PRINT_SELECTOR: 'print',
+    DEFAULT_SKIP_PAGE_TRESHHOLD: 100
 }
 const Factories = {
      makeWidget (rawWidget){
@@ -119,7 +117,7 @@ const Getters = {
         return widget.querySelector('tbody')
     },
     getPrint() {
-        return document.getElementById(CONSTANTS.PRINT_SELECTOR)
+        return document.getElementById(constants.PRINT_SELECTOR)
     },
     getHeight(element) {
         element.style.visibility = "hidden";
@@ -130,18 +128,18 @@ const Getters = {
         return height;
     },
     getWidgets() {
-        return document.querySelectorAll(CONSTANTS.ALL_WIDGETS_SELECTOR);
+        return document.querySelectorAll(constants.ALL_WIDGETS_SELECTOR);
     },
     getPages() {
-        return document.querySelectorAll(CONSTANTS.ALL_PAGES_SELECTOR);
+        return document.querySelectorAll(constants.ALL_PAGES_SELECTOR);
     },
     getTableFromWidget(widget){
-    return widget.querySelector(CONSTANTS.TABLE_WIDGET_SELECTOR)
+    return widget.querySelector(constants.TABLE_WIDGET_SELECTOR)
     }
 }
 const Commands = {
     hideElements() {
-    document.querySelector(CONSTANTS.ALL_MAIL_CONTAINERS).style.display = "none";
+    document.querySelector(constants.ALL_MAIL_CONTAINERS).style.display = "none";
 },
     markAsReady() {
     console.log('---------------------- COMPLETE------------------------');
@@ -168,13 +166,14 @@ const Commands = {
         var itemClone = pWidget.cloneNode(true);
         var sumOfHeights = 0;
         var count = 0;
-        if (pWidget.rows.length) {
+        const rows = Getters.getRows(pWidget)
+        if (rows.length) {
             // Remove rows from widget, copy over from clone individually to fit to page
             for (var i = 0; i < pWidget.rows.length; i++) {
                 pWidget.rows[i].row.parentNode.removeChild(pWidget.rows[i].row);
             }
             let nextRow = itemClone.querySelector('tr');
-            const rowHeight = getHeight(nextRow);
+            const rowHeight = Utils.getHeight(nextRow);
             while (nextRow && count < 2 && sumOfHeights + rowHeight < pageHeight) {
                 pWidget.querySelector('tbody').appendChild(nextRow);
                 sumOfHeights += rowHeight;
@@ -184,9 +183,9 @@ const Commands = {
             page.appendChild(pWidget);
             console.log("Product widget split and added to page");
             // Recurse on any remaining rows
-            const rows = getRows(itemClone)
+            const rows = Utils.getRows(itemClone)
             console.log({rows})
-            if (rows) { return splitWidgetIntoPage(createNewPage(), itemClone); }
+            if (rows) { return this.splitWidgetIntoPage(createNewPage(), itemClone); }
         }
 
         return sumOfHeights;
@@ -210,6 +209,9 @@ const Utils = {
         const items = [];
         nodeList.forEach(el => items.push(el))
         return items
+    },
+    validateRequiredParams(...params) {
+        return params.every(i => !!i)
     }
 }
 
