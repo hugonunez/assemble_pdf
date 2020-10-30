@@ -37,10 +37,10 @@ function assemblePDF({items, pages, pageHeight, skipPageTreshhold, print}) {
         if (delta > skipPageTreshhold) {
             sumOfHeights = 0;
             //Update currentPage state with new one
-            currentPage = Commands.createNewPage({print});
-            pages.push(currentPage);
+            currentPage = Commands.createNewPage({print, pages});
             if (itemHeight >= pageHeight && items[i].table) { //Replace hasTable
-                total = Commands.splitWidgetIntoPage(page, items[i].widget);
+                sumOfHeights = Commands.splitWidgetIntoPage(page, items[i].widget);
+                continue;
             }
         }
         sumOfHeights += itemHeight;
@@ -139,37 +139,38 @@ const Getters = {
 }
 const Commands = {
     hideElements() {
-    document.querySelector(constants.ALL_MAIL_CONTAINERS).style.display = "none";
-},
+        document.querySelector(constants.ALL_MAIL_CONTAINERS).style.display = "none";
+    },
     markAsReady() {
-    console.log('---------------------- COMPLETE------------------------');
-    if (window.pdfdone) {
-        window.pdfdone();
-    }
-    const page = false;
-    if (page || true) {
-        const readyElem = document.createElement("div");
-        readyElem.setAttribute('id', 'pdf-ready');
-        /*        page.appendChild(readyElem);*/
-    }
-    window.status = 'ready';
-},
-    createNewPage({print}) {
+        console.log('---------------------- COMPLETE------------------------');
+        if (window.pdfdone) {
+            window.pdfdone();
+        }
+        const page = false;
+        if (page || true) {
+            const readyElem = document.createElement("div");
+            readyElem.setAttribute('id', 'pdf-ready');
+            /*        page.appendChild(readyElem);*/
+        }
+        window.status = 'ready';
+    },
+    createNewPage({print, pages}) {
         const page = document.createElement("div");
         const pageWrapper = document.createElement("div")
         pageWrapper.setAttribute('class', 'pdf-page');
         pageWrapper.appendChild(page);
         print.appendChild(pageWrapper);
+        pages.push(page);
         return page;
     },
     splitWidgetIntoPage(page, pWidget) {
-        var itemClone = pWidget.cloneNode(true);
-        var sumOfHeights = 0;
-        var count = 0;
+        const itemClone = pWidget.cloneNode(true);
+        let sumOfHeights = 0;
+        let count = 0;
         const rows = Getters.getRows(pWidget)
         if (rows.length) {
             // Remove rows from widget, copy over from clone individually to fit to page
-            for (var i = 0; i < pWidget.rows.length; i++) {
+            for (let i = 0; i < pWidget.rows.length; i++) {
                 pWidget.rows[i].row.parentNode.removeChild(pWidget.rows[i].row);
             }
             let nextRow = itemClone.querySelector('tr');
@@ -184,7 +185,6 @@ const Commands = {
             console.log("Product widget split and added to page");
             // Recurse on any remaining rows
             const rows = Utils.getRows(itemClone)
-            console.log({rows})
             if (rows) { return this.splitWidgetIntoPage(createNewPage(), itemClone); }
         }
 
