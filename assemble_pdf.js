@@ -14,10 +14,10 @@ window.onload = onLoad || fallbackOnload;
 //assemble pdf onload function
 function onLoad () {
     console.log("FLAG")
-    const widgets = getWidgets();
-    const parsedWidgets = parseWidgets(widgets)
-    const pages = [...getPages()]
-    const print = getPrint();
+    const widgets = Getters.getWidgets();
+    const parsedWidgets = Utils.parseWidgets(widgets)
+    const pages = [...Getters.getPages()]
+    const print = Getters.getPrint();
     const allOK = widgets.length && print && pages.length
     console.log("FLAG 2" )
     console.log({allOK,parsedWidgets})
@@ -36,7 +36,6 @@ function onLoad () {
     return null
 }
 function decoupledAssemble({parsedWidgets, pages, pageHeight, skipPageTreshhold, print}) {
-    console.log({parsedWidgets, pages, pageHeight, skipPageTreshhold, print})
     let sumOfHeights = 0;
     //Iterate over items and assign them to a page
     for (let i = 0; i < parsedWidgets.length; i++) {
@@ -48,67 +47,103 @@ function decoupledAssemble({parsedWidgets, pages, pageHeight, skipPageTreshhold,
         if (delta > skipPageTreshhold) {
             sumOfHeights = 0;
             //Update currentPage state with new one
-            currentPage = createNewPage({print});
+            currentPage = Commands.createNewPage({print});
             pages.push(currentPage);
             if (itemHeight >= pageHeight && parsedWidgets[i].table) { //Replace hasTable
                 console.log("LAB")
-                total = splitWidgetIntoPage(page, parsedWidgets[i].widget);
+                total = Commands.splitWidgetIntoPage(page, parsedWidgets[i].widget);
             }
         }
         sumOfHeights += itemHeight;
-        const a = parsedWidgets[i].widget;
-        console.log({a:  a})
-        currentPage.appendChild(a);
+        currentPage.appendChild(parsedWidgets[i].widget);
     }
-    hideElements();
-    markAsReady();
+    Commands.hideElements();
+    Commands.markAsReady();
 }
-function assembleHTML({widgets}) {
-    //Given the arrays of widgets and pages, assemble the objects on an HTML
-    //[{h: widgets[i].offsetHeight}]
-    let sumOfHeights = 0
-    for (let i = 0; i < widgets.length; i++) {
-        const pages = getPages();
-        let page = pages[pages.length - 1];
-        const itemHeight = widgets[i].offsetHeight;
-        const delta = (sumOfHeights + itemHeight) - CONSTANTS.PAGE_HEIGHT;
-        // Create and add to a new page
-        if (delta > 100) {
-            page = createNewPage({print, pages});
-            sumOfHeights = 0;
-            const table = getTableFromWidget(widgets[i])
-            console.log({table, itemHeight, pageHeight, codition: itemHeight > pageHeight && table})
-            if (itemHeight >= pageHeight && table) {
-                sumOfHeights = splitWidgetIntoPage(page, widgets[i]);
-                continue;
+const Factories = {
+     makeWidget (rawWidget){
+        const type = Utils.getWidgetType(rawWidget.classList);
+        const rows = Getters.getRows(rawWidget)
+        return {
+            widget: rawWidget,
+            type,
+            offsetHeight: rawWidget.offsetHeight,
+            table: Getters.getTableFromWidget(rawWidget),
+            tbody: Getters.getTbody(rawWidget),
+            rows: rows.map(item => (this.makeRow(item))),
+        }
+    },
+     makeRow(item){
+        const rawCells = Utils.nodeListToIterable(item.querySelectorAll('td'));
+        const cells = rawCells.map(el => (this.makeCell(el)))
+        const isHorizontalRow = !!cells.find(el => el.cell.classList.contains('mail__hr'))
+        return {row: item, cells, isHorizontalRow/*, height: getHeight(item)*/}
+    },
+     makeCell(item) {
+        const img = item.querySelector('img');
+        const map = item.querySelector('map');
+        const rawLinks = Utils.nodeListToIterable(item.querySelectorAll('a'))
+        return {cell: item, img: this.makeImage(img), map, links: rawLinks.map(item => (this.makeLink(item)))}
+    },
+     makeImage(item) {
+        if (!item) {
+            return null
+        }
+        return {
+            img: item,
+            src: item.src,
+            width: item.width,
+            height: item.height
+        }
+    },
+     makeLink(item) {
+        const style = getComputedStyle(item);
+        return {
+            link: item,
+            href: item.href,
+            style: {
+                position: style.getPropertyValue('position'),
+                top: style.getPropertyValue('top'),
+                left: style.getPropertyValue('left'),
+                width: style.getPropertyValue('width'),
+                height: style.getPropertyValue('height')
             }
         }
-        sumOfHeights += itemHeight;
-        page.appendChild(widgets[i]);
-    }
-    hideElements();
-    markAsReady();
+    },
 }
-function getWidgets() {
-    return document.querySelectorAll(CONSTANTS.ALL_WIDGETS_SELECTOR);
-}
-function getPages() {
-    return document.querySelectorAll(CONSTANTS.ALL_PAGES_SELECTOR);
-}
-function getTableFromWidget(widget){
+const Getters = {
+    getRows(widget) {
+        return Utils.nodeListToIterable(widget.querySelectorAll('tr'))
+    },
+    getTbody(widget) {
+        return widget.querySelector('tbody')
+    },
+    getPrint() {
+        return document.getElementById(CONSTANTS.PRINT_SELECTOR)
+    },
+    getHeight(element) {
+        element.style.visibility = "hidden";
+        document.body.appendChild(element);
+        const height = element.offsetHeight + 0;
+        document.body.removeChild(element);
+        element.style.visibility = "visible";
+        return height;
+    },
+    getWidgets() {
+        return document.querySelectorAll(CONSTANTS.ALL_WIDGETS_SELECTOR);
+    },
+    getPages() {
+        return document.querySelectorAll(CONSTANTS.ALL_PAGES_SELECTOR);
+    },
+    getTableFromWidget(widget){
     return widget.querySelector(CONSTANTS.TABLE_WIDGET_SELECTOR)
+    }
 }
-function parseWidgets(widgets) {
-    return [...widgets].map(w =>makeWidget(w))
-}
-function hideElements() {
+const Commands = {
+    hideElements() {
     document.querySelector(CONSTANTS.ALL_MAIL_CONTAINERS).style.display = "none";
-}
-function omitProperty(properties = [], fun, ...args){
-    const res = fun(args[0], args[1]);
-    return {...res, ...(properties.map(p => ({[p]: undefined})))}
-}
-function markAsReady() {
+},
+    markAsReady() {
     console.log('---------------------- COMPLETE------------------------');
     if (window.pdfdone) {
         window.pdfdone();
@@ -117,120 +152,64 @@ function markAsReady() {
     if (page || true) {
         const readyElem = document.createElement("div");
         readyElem.setAttribute('id', 'pdf-ready');
-/*        page.appendChild(readyElem);*/
+        /*        page.appendChild(readyElem);*/
     }
     window.status = 'ready';
-}
-function splitWidgetIntoPage(page, pWidget) {
-    var itemClone = pWidget.cloneNode(true);
-    var sumOfHeights = 0;
-    var count = 0;
-    if (pWidget.rows.length) {
-        // Remove rows from widget, copy over from clone individually to fit to page
-        for (var i = 0; i < pWidget.rows.length; i++) {
-            pWidget.rows[i].row.parentNode.removeChild(pWidget.rows[i].row);
+},
+    createNewPage({print}) {
+        const page = document.createElement("div");
+        const pageWrapper = document.createElement("div")
+        pageWrapper.setAttribute('class', 'pdf-page');
+        pageWrapper.appendChild(page);
+        print.appendChild(pageWrapper);
+        return page;
+    },
+    splitWidgetIntoPage(page, pWidget) {
+        var itemClone = pWidget.cloneNode(true);
+        var sumOfHeights = 0;
+        var count = 0;
+        if (pWidget.rows.length) {
+            // Remove rows from widget, copy over from clone individually to fit to page
+            for (var i = 0; i < pWidget.rows.length; i++) {
+                pWidget.rows[i].row.parentNode.removeChild(pWidget.rows[i].row);
+            }
+            let nextRow = itemClone.querySelector('tr');
+            const rowHeight = getHeight(nextRow);
+            while (nextRow && count < 2 && sumOfHeights + rowHeight < pageHeight) {
+                pWidget.querySelector('tbody').appendChild(nextRow);
+                sumOfHeights += rowHeight;
+                nextRow = itemClone.querySelector('tr');
+                count++;
+            }
+            page.appendChild(pWidget);
+            console.log("Product widget split and added to page");
+            // Recurse on any remaining rows
+            const rows = getRows(itemClone)
+            console.log({rows})
+            if (rows) { return splitWidgetIntoPage(createNewPage(), itemClone); }
         }
-        let nextRow = itemClone.querySelector('tr');
-        const rowHeight = getHeight(nextRow);
-        while (nextRow && count < 2 && sumOfHeights + rowHeight < pageHeight) {
-            pWidget.querySelector('tbody').appendChild(nextRow);
-            sumOfHeights += rowHeight;
-            nextRow = itemClone.querySelector('tr');
-            count++;
-        }
-        page.appendChild(pWidget);
-        console.log("Product widget split and added to page");
-        // Recurse on any remaining rows
-        const rows = getRows(itemClone)
-        console.log({rows})
-        if (rows) { return splitWidgetIntoPage(createNewPage(), itemClone); }
-    }
 
-    return sumOfHeights;
-}
-function getRows(widget) {
-    return nodeListToIterable(widget.querySelectorAll('tr'))
-}
-function getTbody(widget) {
-    return widget.querySelector('tbody')
-}
-function getPrint() {
-    return document.getElementById(CONSTANTS.PRINT_SELECTOR)
-}
-function getHeight(element) {
-    element.style.visibility = "hidden";
-    document.body.appendChild(element);
-    const height = element.offsetHeight + 0;
-    document.body.removeChild(element);
-    element.style.visibility = "visible";
-    return height;
-}
-function createNewPage({print}) {
-    const page = document.createElement("div");
-    const pageWrapper = document.createElement("div")
-    pageWrapper.setAttribute('class', 'pdf-page');
-    pageWrapper.appendChild(page);
-    print.appendChild(pageWrapper);
-    return page;
-}
-function makeWidget (rawWidget){
-    const type = getWidgetType(rawWidget.classList);
-    const rows = getRows(rawWidget)
-    console.log({rawWidget, rows})
-    return {
-        widget: rawWidget,
-        type,
-        offsetHeight: rawWidget.offsetHeight,
-        table: getTableFromWidget(rawWidget),
-        tbody: getTbody(rawWidget),
-        rows: rows.map(item => (makeRow(item))),
+        return sumOfHeights;
     }
 }
-function makeRow(item){
-    const rawCells = nodeListToIterable(item.querySelectorAll('td'));
-    const cells = rawCells.map(el => (makeCell(el)))
-    const isHorizontalRow = !!cells.find(el => el.cell.classList.contains('mail__hr'))
-    return {row: item, cells, isHorizontalRow/*, height: getHeight(item)*/}
-}
-function makeCell(item) {
-    const img = item.querySelector('img');
-    const map = item.querySelector('map');
-    const rawLinks = nodeListToIterable(item.querySelectorAll('a'))
-    return {cell: item, img: makeImage(img), map, links: rawLinks.map(item => (makeLink(item)))}
-}
-function nodeListToIterable(nodeList) {
-    const items = [];
-    nodeList.forEach(el => items.push(el))
-    return items
-}
-function makeImage(item) {
-    if (!item) {
-        return null
-    }
-    return {
-        img: item,
-        src: item.src,
-        width: item.width,
-        height: item.height
+const Utils = {
+    parseWidgets(widgets) {
+        return [...widgets].map(w =>Factories.makeWidget(w))
+    },
+    omitProperties(properties = [], fun, ...args){
+        const res = fun(args[0], args[1]);
+        return {...res, ...(properties.map(p => ({[p]: undefined})))}
+    },
+    getWidgetType (classList){
+        if(classList.length === 0){return 'unclassified'}
+        if(classList.contains('mail__signature')){return 'mail__signature'}
+        if(classList.contains('mail__intro-text')){return 'mail__intro-text'};
+        return 'mail_widget'
+    },
+    nodeListToIterable(nodeList) {
+        const items = [];
+        nodeList.forEach(el => items.push(el))
+        return items
     }
 }
-function makeLink(item) {
-    const style = getComputedStyle(item);
-    return {
-        link: item,
-        href: item.href,
-        style: {
-            position: style.getPropertyValue('position'),
-            top: style.getPropertyValue('top'),
-            left: style.getPropertyValue('left'),
-            width: style.getPropertyValue('width'),
-            height: style.getPropertyValue('height')
-        }
-    }
-}
-function getWidgetType (classList){
-    if(classList.length === 0){return 'unclassified'}
-    if(classList.contains('mail__signature')){return 'mail__signature'}
-    if(classList.contains('mail__intro-text')){return 'mail__intro-text'};
-    return 'mail_widget'
-}
+
