@@ -40,7 +40,7 @@ function assemblePDF({items, pages, pageHeight, skipPageTreshhold, print}) {
             currentPage = Commands.createNewPage({print, pages});
             console.log({pageHeight, itemHeight, CO: constants.PAGE_HEIGHT})
             if ((itemHeight >= pageHeight) && items[i].table && !items[i].isHorizontalRow) { //Replace hasTable
-                sumOfHeights = Commands.splitWidgetIntoPage({page: currentPage, pWidget: items[i], pages, print});
+                sumOfHeights = Commands.splitWidgetIntoPage({page: currentPage, pWidget: items[i].widget, pages, print});
                 continue;
             }
         }
@@ -56,7 +56,7 @@ const constants = {
     TABLE_WIDGET_SELECTOR: "table.widget-product",
     ALL_MAIL_CONTAINERS: "#main > div.mail__container",
     /*1056*/
-    PAGE_HEIGHT: (window.customSize)? window.customSize : 300,
+    PAGE_HEIGHT: (window.customSize)? window.customSize : 1056,
     PRINT_SELECTOR: 'print',
     DEFAULT_SKIP_PAGE_TRESHHOLD: 100
 }
@@ -164,28 +164,27 @@ const Commands = {
         return page;
     },
     splitWidgetIntoPage({page, pWidget, pages, print}) {
-        console.log({page, pWidget, pages})
-        const itemClone = pWidget.widget.cloneNode(true);
+        const itemClone = pWidget.cloneNode(true);
         let sumOfHeights = 0;
         let count = 0;
-        if (pWidget.rows.length) {
+        const rows = Getters.getRows(pWidget)
+        if (rows.length) {
             // Remove rows from widget, copy over from clone individually to fit to page
-            for (let i = 0; i < pWidget.rows.length; i++) {
-                Commands.selfRemoveFromDOM(pWidget.rows[i].row)
+            for (let i = 0; i < rows.length; i++) {
+                Commands.selfRemoveFromDOM(rows[i])
             }
             let nextRow = itemClone.querySelector('tr');
             const rowHeight = Utils.getHeight(nextRow);
             while (nextRow && count < 2 && sumOfHeights + rowHeight < pageHeight) {
-                console.log({pWidget})
-                pWidget.tbody.appendChild(nextRow);
+                pWidget.querySelector('tbody').appendChild(nextRow);
                 sumOfHeights += rowHeight;
                 nextRow = itemClone.querySelector('tr');
                 count++;
             }
-            page.appendChild(pWidget.widget);
+            page.appendChild(pWidget);
             // Recurse on any remaining rows
-            const rows = Getters.getRows(itemClone)
-            if (rows) { return this.splitWidgetIntoPage(this.createNewPage({print, pages}), itemClone); }
+            const cloneRows = Getters.getRows(itemClone)
+            if (cloneRows.length) { return this.splitWidgetIntoPage(this.createNewPage({print, pages}), itemClone); }
         }
         console.count("SPLIT")
 

@@ -48,7 +48,7 @@
       <workItem from="1603976723452" duration="9138000" />
       <workItem from="1603987289158" duration="3685000" />
       <workItem from="1603993709654" duration="5198000" />
-      <workItem from="1604062744717" duration="6126000" />
+      <workItem from="1604062744717" duration="7733000" />
     </task>
     <servers />
   </component>
@@ -64,5 +64,17 @@
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
     <state x="660" y="252" key="run.anything.popup/72.27.1848.1053/1920.0.1920.1080@72.27.1848.1053" timestamp="1604003147087" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/assemble_pdf.js</url>
+          <line>186</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
