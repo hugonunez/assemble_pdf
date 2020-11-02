@@ -3,7 +3,6 @@
 const fallbackOnload = window.onload;
 window.onload = onLoad || fallbackOnload;
 
-//assemble pdf onload function
 function onLoad () {
     const widgets = Getters.getWidgets();
     const parsedWidgets = Utils.parseWidgets(widgets)
@@ -12,6 +11,7 @@ function onLoad () {
     const validated = Utils.validateRequiredParams(widgets, parsedWidgets, pages, print)
     if (validated) {
         console.log('Using assemble_pdf onLoad funtion')
+        console.log({widgets, parsedWidgets})
         return assemblePDF({
             pages,
             items: parsedWidgets,
@@ -24,7 +24,12 @@ function onLoad () {
     console.warn({MSG: "Could not load assemble_pdf, required elements returned: ", widgets, parsedWidgets, pages, print})
     return null
 }
-function assemblePDF({items, pages, pageHeight, skipPageTreshhold, print}) {
+function assemble ({widgets, print, pages}) {
+    widgets.forEach(el=>print.appendChild(el))
+    Commands.hideElements();
+}
+//assemble pdf onload function
+ function assemblePDF({items, pages, pageHeight, skipPageTreshhold, print}) {
     let sumOfHeights = 0;
     //Iterate over widgets and assign them to a page
     for (let i = 0; i < items.length; i++) {

@@ -1,0 +1,25 @@
+{
+  "name": "assemble_pdf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "assemble_pdf.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "serve",
+    "test:e2e": "cypress open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hugonunez/assemble_pdf.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hugonunez/assemble_pdf/issues"
+  },
+  "homepage": "https://github.com/hugonunez/assemble_pdf#readme",
+  "dependencies": {
+    "cypress": "^5.5.0",
+    "serve": "^11.3.2"
+  }
+}
